@@ -1,0 +1,37 @@
+version: '3.3'
+
+services:
+  discovery-service:
+    container_name: "discovery-service"
+    build: "./discovery-service"
+    expose:
+      - "8761"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+      - "SERVER_PORT=8761"
+      - "eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka"
+    ports:
+      - "8761:8761"
+    networks:
+      - "microservices-booking-rides-network"
+    restart: always
+  api-gateway:
+    container_name: "api-gateway"
+    build: "./api-gateway"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+      - "SERVER_PORT=8082"
+      - "eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka"
+    ports:
+      - "8082:8082"
+    networks:
+      - "microservices-booking-rides-network"
+    depends_on:
+      - discovery-service
+    restart: always
+    links:
+      - discovery-service
+
+networks:
+  microservices-booking-rides-network:
+    driver: bridge
