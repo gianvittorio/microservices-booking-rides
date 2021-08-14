@@ -1,47 +1,28 @@
 package com.gianvittorio.orderservice.domain.entity;
 
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "orders")
 public class OrderEntity {
 
-    @Id
-    @Column
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String rideId;
+    private Long id;
 
-    @Column
-    @NotNull
-    @NotBlank
-    private String passengerId;
+    private Long passengerId;
 
-    @Column
-    @NotNull
-    @NotBlank
-    private String driverId;
+    private Long driverId;
 
-    @Column
-    @NotNull
-    @NotBlank
     private String origin;
 
-    @Column
-    @NotNull
-    @NotBlank
     private String destination;
 
-    @Column
-    @NotNull
     private ZonedDateTime departureTime;
 }
