@@ -1,10 +1,9 @@
-package com.gianvittorio.orderservice.config;
+package com.gianvittorio.orderservice.config.r2dbc;
 
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryOptions;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.r2dbc.ConnectionFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,30 +15,17 @@ import org.springframework.r2dbc.connection.init.ConnectionFactoryInitializer;
 import org.springframework.r2dbc.connection.init.ResourceDatabasePopulator;
 import reactor.core.publisher.Mono;
 
-import static io.r2dbc.spi.ConnectionFactoryOptions.*;
-
 @Configuration
-@EnableConfigurationProperties(R2BCConfigurationProperties.class)
 @EnableR2dbcRepositories
 @RequiredArgsConstructor
 public class R2DBCConfiguration extends AbstractR2dbcConfiguration {
 
-    private final R2BCConfigurationProperties properties;
+    private final ConnectionFactoryOptions.Builder connectionFactoryOptionsBuilder;
 
     @Override
     @Bean
     public ConnectionFactory connectionFactory() {
-        return ConnectionFactoryBuilder.withOptions(connectionFactoryOptions()).build();
-    }
-
-    @Bean
-    public ConnectionFactoryOptions.Builder connectionFactoryOptions() {
-        return ConnectionFactoryOptions.builder()
-                .option(DRIVER, properties.getDriver())
-                .option(PROTOCOL, properties.getProtocol())
-                .option(USER, properties.getUser())
-                .option(PASSWORD, properties.getPassword())
-                .option(DATABASE, properties.getDatabase());
+        return ConnectionFactoryBuilder.withOptions(connectionFactoryOptionsBuilder).build();
     }
 
     @Bean
