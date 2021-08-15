@@ -1,7 +1,7 @@
 package com.gianvittorio.orderservice.unit.web.controller;
 
 import com.gianvittorio.common.domain.Category;
-import com.gianvittorio.orderservice.web.controller.OrderController;
+import com.gianvittorio.orderservice.web.controller.OrdersController;
 import com.gianvittorio.orderservice.web.dto.OrderRequestDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -24,9 +23,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-@WebFluxTest(controllers = OrderController.class)
+@WebFluxTest(controllers = OrdersController.class)
 @TestPropertySource(properties = "server.port=8081")
-public class OrderControllerTest {
+public class OrdersControllerTest {
 
     @Autowired
     WebTestClient webTestClient;

@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("orders")
-public class OrderController {
+public class OrdersController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<OrderResponseDTO> createOrder(@RequestBody final OrderRequestDTO orderRequestDTO) {
