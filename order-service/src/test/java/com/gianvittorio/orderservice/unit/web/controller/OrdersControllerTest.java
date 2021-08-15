@@ -1,13 +1,19 @@
 package com.gianvittorio.orderservice.unit.web.controller;
 
 import com.gianvittorio.common.domain.Category;
+import com.gianvittorio.orderservice.domain.entity.OrderEntity;
+import com.gianvittorio.orderservice.service.OrdersService;
 import com.gianvittorio.orderservice.web.controller.OrdersController;
 import com.gianvittorio.orderservice.web.dto.OrderRequestDTO;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -19,7 +25,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.ZonedDateTime;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.*;
 
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
@@ -29,6 +35,9 @@ public class OrdersControllerTest {
 
     @Autowired
     WebTestClient webTestClient;
+
+    @MockBean
+    OrdersService ordersService;
 
     @Test
     @DisplayName("Just a silly test")
@@ -42,6 +51,18 @@ public class OrdersControllerTest {
                 .destination("Y")
                 .departureTime(ZonedDateTime.now().plusMinutes(30))
                 .build();
+
+        final OrderEntity orderEntity = OrderEntity.builder()
+                .id(1234l)
+                .passengerId(123l)
+                .driverId(321l)
+                .origin("X")
+                .destination("Y")
+                .departureTime(ZonedDateTime.now().plusMinutes(30))
+                .build();
+
+        given(ordersService.createOrder(any(OrderEntity.class)))
+                .willReturn(Mono.just(orderEntity));
 
 
         // When and Then
@@ -63,5 +84,8 @@ public class OrdersControllerTest {
                 .body(Mono.justOrEmpty(orderRequestDTO), OrderRequestDTO.class)
                 .exchange()
                 .expectStatus().isOk();
+
+        verify(ordersService)
+                .createOrder(any(OrderEntity.class));
     }
 }

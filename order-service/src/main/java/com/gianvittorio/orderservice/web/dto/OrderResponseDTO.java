@@ -13,7 +13,7 @@ import java.time.ZonedDateTime;
 @Builder
 public class OrderResponseDTO {
 
-    private String orderId;
+    private Long orderId;
 
     private ZonedDateTime createdAt;
 
