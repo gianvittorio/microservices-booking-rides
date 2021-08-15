@@ -15,6 +15,7 @@ services:
     networks:
       - "microservices-booking-rides-network"
     restart: always
+
   api-gateway:
     container_name: "api-gateway"
     build: "./api-gateway"
@@ -26,12 +27,76 @@ services:
       - "8082:8082"
     networks:
       - "microservices-booking-rides-network"
+    restart: always
     depends_on:
       - discovery-service
-    restart: always
     links:
       - discovery-service
+
+  order-service:
+    #container_name: "order-service"
+    build: "./order-service"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+      - "eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka"
+    networks:
+    - "microservices-booking-rides-network"
+    restart: always
+    depends_on:
+      - order-service-postgres
+      - discovery-service
+    links:
+      - discovery-service
+
+  order-service-postgres:
+    container_name: order-service-postgres
+    image: postgres:10.5-alpine
+    environment:
+      - "POSTGRES_USER=test"
+      - "POSTGRES_PASSWORD=test"
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - "5432:5432"
+    volumes:
+      - order-service-postgres-volume:/var/lib/postgresql/data
+
+  users-service:
+    #container_name: "users-service"
+    build: "./users-service"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+      - "eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka"
+    networks:
+      - "microservices-booking-rides-network"
+    restart: always
+    depends_on:
+      - users-service-postgres
+      - discovery-service
+    links:
+      - discovery-service
+
+  users-service-postgres:
+    container_name: users-service-postgres
+    image: postgres:10.5-alpine
+    environment:
+      - "POSTGRES_USER=test"
+      - "POSTGRES_PASSWORD=test"
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - "5433:5432"
+    volumes:
+      - users-service-postgres-volume:/var/lib/postgresql/data
 
 networks:
   microservices-booking-rides-network:
     driver: bridge
+
+volumes:
+  order-service-postgres-volume:
+  users-service-postgres-volume:
