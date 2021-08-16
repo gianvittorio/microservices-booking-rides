@@ -46,18 +46,18 @@ services:
       - order-service-postgres
       - discovery-service
     links:
+      - order-service-postgres
       - discovery-service
 
   order-service-postgres:
     container_name: order-service-postgres
-    image: postgres:10.5-alpine
+    image: postgres:latest
     environment:
       - "POSTGRES_USER=test"
       - "POSTGRES_PASSWORD=test"
-    logging:
-      options:
-        max-size: 10m
-        max-file: "3"
+      - "POSTGRES_DB=test"
+    networks:
+      - "microservices-booking-rides-network"
     ports:
       - "5432:5432"
     volumes:
@@ -76,22 +76,52 @@ services:
       - users-service-postgres
       - discovery-service
     links:
+      - users-service-postgres
       - discovery-service
 
   users-service-postgres:
     container_name: users-service-postgres
-    image: postgres:10.5-alpine
+    image: postgres:latest
     environment:
       - "POSTGRES_USER=test"
       - "POSTGRES_PASSWORD=test"
-    logging:
-      options:
-        max-size: 10m
-        max-file: "3"
+      - "POSTGRES_DB=test"
+    networks:
+      - "microservices-booking-rides-network"
     ports:
       - "5433:5432"
     volumes:
       - users-service-postgres-volume:/var/lib/postgresql/data
+
+  driver-matching-service:
+    #container_name: "driver-matching-service"
+    build: "./driver-matching-service"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+      - "eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka"
+    networks:
+      - "microservices-booking-rides-network"
+    restart: always
+    depends_on:
+      - driver-matching-service-postgres
+      - discovery-service
+    links:
+      - driver-matching-service-postgres
+      - discovery-service
+
+  driver-matching-service-postgres:
+    container_name: driver-matching-service-postgres
+    image: postgres:latest
+    environment:
+      - "POSTGRES_USER=test"
+      - "POSTGRES_PASSWORD=test"
+      - "POSTGRES_DB=test"
+    networks:
+      - "microservices-booking-rides-network"
+    ports:
+      - "5434:5432"
+    volumes:
+        - driver-matching-service-postgres-volume:/var/lib/postgresql/data
 
 networks:
   microservices-booking-rides-network:
@@ -100,3 +130,4 @@ networks:
 volumes:
   order-service-postgres-volume:
   users-service-postgres-volume:
+  driver-matching-service-postgres-volume:

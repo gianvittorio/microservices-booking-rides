@@ -26,6 +26,7 @@
         <module>common</module>
         <module>order-service</module>
         <module>users-service</module>
+        <module>driver-matching-service</module>
 	</modules>
 
     <dependencyManagement>
