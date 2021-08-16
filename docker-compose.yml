@@ -59,7 +59,7 @@ services:
     networks:
       - "microservices-booking-rides-network"
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - order-service-postgres-volume:/var/lib/postgresql/data
 
@@ -89,7 +89,7 @@ services:
     networks:
       - "microservices-booking-rides-network"
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       - users-service-postgres-volume:/var/lib/postgresql/data
 
@@ -119,7 +119,7 @@ services:
     networks:
       - "microservices-booking-rides-network"
     ports:
-      - "5434:5432"
+      - "5435:5432"
     volumes:
         - driver-matching-service-postgres-volume:/var/lib/postgresql/data
 

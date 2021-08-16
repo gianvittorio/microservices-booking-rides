@@ -9,3 +9,5 @@ CREATE TABLE IF NOT EXISTS drivers (
     is_available BOOLEAN NOT NULL,
     rating INTEGER
 );
+
+CREATE UNIQUE INDEX document_i ON drivers (document);
