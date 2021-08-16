@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS drivers (
     document VARCHAR(50) NOT NULL,
     phone VARCHAR(50) NOT NULL,
     email VARCHAR(50) NOT NULL,
-    category ENUM('standard', 'comfort') NOT NULL,
+    category VARCHAR(50) NOT NULL,
     is_available BOOLEAN NOT NULL,
     rating INTEGER
 );

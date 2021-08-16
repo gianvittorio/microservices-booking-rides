@@ -56,6 +56,8 @@ public class UsersRepositoryTest {
                 .take(1)
                 .as(StepVerifier::create)
                 .consumeNextWith(entity -> {
+                    assertThat(entity.getId())
+                            .isNotNull();
                     assertThat(entity.getFirstname())
                             .isEqualTo(userEntity.getFirstname());
                     assertThat(entity.getLastname())
@@ -87,6 +89,8 @@ public class UsersRepositoryTest {
                 .take(1)
                 .as(StepVerifier::create)
                 .consumeNextWith(entity -> {
+                    assertThat(entity.getId())
+                            .isNotNull();
                     assertThat(entity.getFirstname())
                             .isEqualTo(userEntity.getFirstname());
                     assertThat(entity.getLastname())

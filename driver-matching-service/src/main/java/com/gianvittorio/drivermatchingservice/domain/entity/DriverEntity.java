@@ -1,6 +1,5 @@
 package com.gianvittorio.drivermatchingservice.domain.entity;
 
-import com.gianvittorio.common.domain.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,8 +34,8 @@ public class DriverEntity {
     @Column("email")
     private String email;
 
-    @Column
-    private Category category;
+    @Column("category")
+    private String category;
 
     @Column("is_available")
     private Boolean isAvailable;
