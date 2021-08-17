@@ -8,4 +8,4 @@ CREATE TABLE IF NOT EXISTS users (
     rating INTEGER
 );
 
-CREATE UNIQUE INDEX document_i ON users (document);
+CREATE UNIQUE INDEX IF NOT EXISTS document_i ON users (document);

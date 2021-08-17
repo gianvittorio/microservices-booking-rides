@@ -11,4 +11,4 @@ CREATE TABLE IF NOT EXISTS drivers (
     rating INTEGER
 );
 
-CREATE UNIQUE INDEX document_i ON drivers (document);
+CREATE UNIQUE INDEX IF NOT EXISTS document_i ON drivers (document);
