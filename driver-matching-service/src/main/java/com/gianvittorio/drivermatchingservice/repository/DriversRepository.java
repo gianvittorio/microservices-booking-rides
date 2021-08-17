@@ -17,6 +17,8 @@ public interface DriversRepository extends ReactiveCrudRepository<DriverEntity, 
    @Query("DELETE FROM drivers WHERE document = :document")
    Mono<Void> deleteByDocument(final String document);
 
-   @Query("SELECT * FROM drivers WHERE is_available = true AND category = :category AND location = :location AND rating >= :rating LIMIT 1")
+   @Query("SELECT * FROM drivers WHERE id IN (SELECT id FROM drivers WHERE is_available = true AND category = :category AND location = :location AND rating >= :rating LIMIT 1) OR " +
+           "id IN (SELECT id FROM drivers WHERE is_available = true AND category = :category AND location = :location AND rating IN (SELECT MAX(rating) from drivers WHERE is_available = true AND category = :category AND location = :location AND rating < :rating)) " +
+           "ORDER BY rating DESC LIMIT 1")
    Mono<DriverEntity> findFirstAvailable(final String category, final String location, final Integer rating);
 }

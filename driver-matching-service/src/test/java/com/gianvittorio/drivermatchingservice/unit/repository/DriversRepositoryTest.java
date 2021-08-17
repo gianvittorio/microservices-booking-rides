@@ -88,8 +88,8 @@ public class DriversRepositoryTest {
     }
 
     @Test
-    @DisplayName("Must return very first driver matching location, category and rating")
-    public void findFirstAvailableDriver() {
+    @DisplayName("Must return very first driver matching location, category and  ceil rating")
+    public void findFirstAvailableDriverWithCeilRating() {
 
         // Given
         final int rating = 5;
@@ -119,7 +119,64 @@ public class DriversRepositoryTest {
                 .bind("is_available", driverEntity.getIsAvailable())
                 .bind("rating", driverEntity.getRating())
                 .then()
-                .thenMany(this.driversRepository.findFirstAvailable(driverEntity.getCategory(), driverEntity.getLocation(), rating - 1))
+                .thenMany(this.driversRepository.findFirstAvailable(driverEntity.getCategory(), driverEntity.getLocation(), driverEntity.getRating() - 1))
+                .as(StepVerifier::create)
+                .consumeNextWith(entity -> {
+                    assertThat(entity.getId())
+                            .isNotNull();
+                    assertThat(entity.getFirstname())
+                            .isEqualTo(driverEntity.getFirstname());
+                    assertThat(entity.getLastname())
+                            .isEqualTo(driverEntity.getLastname());
+                    assertThat(entity.getPhone())
+                            .isEqualTo(driverEntity.getPhone());
+                    assertThat(entity.getEmail())
+                            .isEqualTo(driverEntity.getEmail());
+                    assertThat(entity.getCategory())
+                            .isEqualTo(driverEntity.getCategory());
+                    assertThat(entity.getLocation())
+                            .isEqualTo(driverEntity.getLocation());
+                    assertThat(entity.getIsAvailable())
+                            .isEqualTo(driverEntity.getIsAvailable());
+                    assertThat((entity.getRating()))
+                            .isGreaterThanOrEqualTo(driverEntity.getRating());
+                })
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("Must return very first driver matching location, category and strictly lesser rating")
+    public void findFirstAvailableDriverWithLesserRating() {
+
+        // Given
+        final int rating = 5;
+
+        final DriverEntity driverEntity = DriverEntity.builder()
+                .document("000.000.000-01")
+                .firstname("Jane")
+                .lastname("Doe")
+                .phone("+5547900000000")
+                .email("jane.doe@nowhere.net")
+                .category("comfort")
+                .location("X")
+                .rating(rating)
+                .isAvailable(true)
+                .build();
+
+        // When and Then
+        databaseClient
+                .sql("INSERT INTO drivers (firstname, lastname, document, phone, email, category, location, is_available, rating) VALUES (:firstname, :lastname, :document, :phone, :email, :category, :location, :is_available, :rating)")
+                .bind("firstname", driverEntity.getFirstname())
+                .bind("lastname", driverEntity.getLastname())
+                .bind("document", driverEntity.getDocument())
+                .bind("phone", driverEntity.getPhone())
+                .bind("email", driverEntity.getEmail())
+                .bind("category", driverEntity.getCategory())
+                .bind("location", driverEntity.getLocation())
+                .bind("is_available", driverEntity.getIsAvailable())
+                .bind("rating", driverEntity.getRating())
+                .then()
+                .thenMany(this.driversRepository.findFirstAvailable(driverEntity.getCategory(), driverEntity.getLocation(), driverEntity.getRating() + 1))
                 .as(StepVerifier::create)
                 .consumeNextWith(entity -> {
                     assertThat(entity.getId())
