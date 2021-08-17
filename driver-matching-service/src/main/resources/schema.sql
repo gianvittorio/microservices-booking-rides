@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS drivers (
     category VARCHAR(50) NOT NULL,
     location VARCHAR(50) NOT NULL,
     is_available BOOLEAN NOT NULL,
-    rating INTEGER
+    rating INTEGER NOT NULL
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS document_i ON drivers (document);

@@ -52,6 +52,7 @@ public class DriversControllerTest {
                 .email("jane.doe@nowhere.net")
                 .category("comfort")
                 .location("X")
+                .rating(0)
                 .isAvailable(true)
                 .build();
 
@@ -194,7 +195,8 @@ public class DriversControllerTest {
                 .jsonPath("$.phone").isEqualTo(driverEntity.getPhone())
                 .jsonPath("$.email").isEqualTo(driverEntity.getEmail())
                 .jsonPath("$.category").isEqualTo(driverEntity.getCategory())
-                .jsonPath("$.location").isEqualTo(driverEntity.getLocation());
+                .jsonPath("$.location").isEqualTo(driverEntity.getLocation())
+                .jsonPath("$.rating").isEqualTo(driverEntity.getRating());
 
         verify(driversService)
                 .save(any(DriverEntity.class));
@@ -253,7 +255,8 @@ public class DriversControllerTest {
                 .jsonPath("$.phone").isEqualTo(driverEntity.getPhone())
                 .jsonPath("$.email").isEqualTo(driverEntity.getEmail())
                 .jsonPath("$.category").isEqualTo(driverEntity.getCategory())
-                .jsonPath("$.location").isEqualTo(driverEntity.getLocation());
+                .jsonPath("$.location").isEqualTo(driverEntity.getLocation())
+                .jsonPath("$.rating").isEqualTo(driverEntity.getRating());
 
         verify(driversService)
                 .findByDocument(any(String.class));
