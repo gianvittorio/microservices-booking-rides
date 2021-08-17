@@ -37,6 +37,9 @@ public class DriverEntity {
     @Column("category")
     private String category;
 
+    @Column("location")
+    private String location;
+
     @Column("is_available")
     private Boolean isAvailable;
 

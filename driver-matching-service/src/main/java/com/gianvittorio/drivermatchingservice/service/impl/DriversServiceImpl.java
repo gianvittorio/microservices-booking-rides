@@ -16,22 +16,22 @@ public class DriversServiceImpl implements DriversService {
     final private DriversRepository driversRepository;
 
     @Override
-    public Mono<DriverEntity> findFirstAvailableByCategory(String category) {
-        return driversRepository.findFirstAvailableByCategory(category);
+    public Mono<DriverEntity> findFirstAvailable(final String category, final String location, final Integer rating) {
+        return driversRepository.findFirstAvailable(category, location, rating);
     }
 
     @Override
-    public Mono<DriverEntity> findByDocument(String document) {
+    public Mono<DriverEntity> findByDocument(final String document) {
         return driversRepository.findByDocument(document).next();
     }
 
     @Override
-    public Mono<DriverEntity> save(DriverEntity driverEntity) {
+    public Mono<DriverEntity> save(final DriverEntity driverEntity) {
         return driversRepository.save(driverEntity);
     }
 
     @Override
-    public Mono<Void> deleteByDocument(String document) {
+    public Mono<Void> deleteByDocument(final String document) {
         return driversRepository.deleteByDocument(document);
     }
 }

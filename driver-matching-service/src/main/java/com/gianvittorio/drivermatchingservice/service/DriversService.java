@@ -5,7 +5,7 @@ import reactor.core.publisher.Mono;
 
 public interface DriversService {
 
-    Mono<DriverEntity> findFirstAvailableByCategory(final String category);
+    Mono<DriverEntity> findFirstAvailable(final String category, final String location, final Integer rating);
 
     Mono<DriverEntity> findByDocument(final String document);
 

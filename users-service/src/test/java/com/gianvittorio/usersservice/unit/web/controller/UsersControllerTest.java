@@ -101,10 +101,6 @@ public class UsersControllerTest {
         userEntity.setId(id);
         BeanUtils.copyProperties(userRequestDTO, userEntity);
 
-
-        final UserResponseDTO userResponseDTO = new UserResponseDTO();
-        BeanUtils.copyProperties(userEntity, userResponseDTO);
-
         given(usersService.saveUser(any(UserEntity.class)))
                 .willReturn(Mono.just(userEntity));
 
@@ -157,11 +153,7 @@ public class UsersControllerTest {
         userEntity.setId(id);
         BeanUtils.copyProperties(userRequestDTO, userEntity);
 
-
-        final UserResponseDTO userResponseDTO = new UserResponseDTO();
-        BeanUtils.copyProperties(userEntity, userResponseDTO);
-
-        given(usersService.findUserByDocument(userResponseDTO.getDocument()))
+        given(usersService.findUserByDocument(userRequestDTO.getDocument()))
                 .willReturn(Mono.just(userEntity));
         given(usersService.saveUser(any(UserEntity.class)))
                 .willReturn(Mono.just(userEntity));

@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS drivers (
     phone VARCHAR(50) NOT NULL,
     email VARCHAR(50) NOT NULL,
     category VARCHAR(50) NOT NULL,
+    location VARCHAR(50) NOT NULL,
     is_available BOOLEAN NOT NULL,
     rating INTEGER
 );
