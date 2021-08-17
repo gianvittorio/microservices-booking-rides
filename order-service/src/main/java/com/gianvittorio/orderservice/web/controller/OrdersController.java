@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @RestController
@@ -28,14 +29,14 @@ public class OrdersController {
                 .driverId(321l)
                 .origin("X")
                 .destination("Y")
-                .departureTime(ZonedDateTime.now().plusMinutes(30))
+                .departureTime(LocalDateTime.now().plusMinutes(30))
                 .build();
 
         return ordersService.createOrder(orderEntity)
                 .map(entity ->
                         OrderResponseDTO.builder()
                                 .orderId(entity.getId())
-                                .createdAt(ZonedDateTime.now())
+                                .createdAt(LocalDateTime.now())
                                 .departureTime(entity.getDepartureTime())
                                 .driverName("ciccio broccolo")
                                 .build()

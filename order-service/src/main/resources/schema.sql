@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS orders (
     driver_id INTEGER NOT NULL,
     origin VARCHAR(50) NOT NULL,
     destination VARCHAR(50) NOT NULL,
-    departure_time TIME
+    departure_time TIMESTAMP
 );

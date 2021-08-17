@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -24,5 +24,5 @@ public class OrderRequestDTO {
 
     private Boolean isBooked;
 
-    private ZonedDateTime departureTime;
+    private LocalDateTime departureTime;
 }

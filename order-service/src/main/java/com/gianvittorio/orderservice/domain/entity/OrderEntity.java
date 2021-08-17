@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @Data
@@ -35,5 +36,5 @@ public class OrderEntity {
     private String destination;
 
     @Column("departure_time")
-    private ZonedDateTime departureTime;
+    private LocalDateTime departureTime;
 }

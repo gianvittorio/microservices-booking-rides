@@ -5,12 +5,9 @@ import com.gianvittorio.orderservice.domain.entity.OrderEntity;
 import com.gianvittorio.orderservice.service.OrdersService;
 import com.gianvittorio.orderservice.web.controller.OrdersController;
 import com.gianvittorio.orderservice.web.dto.OrderRequestDTO;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,7 +20,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import static org.mockito.BDDMockito.*;
 
@@ -49,7 +46,7 @@ public class OrdersControllerTest {
                 .category(Category.COMFORT)
                 .origin("X")
                 .destination("Y")
-                .departureTime(ZonedDateTime.now().plusMinutes(30))
+                .departureTime(LocalDateTime.now().plusMinutes(30))
                 .build();
 
         final OrderEntity orderEntity = OrderEntity.builder()
@@ -58,7 +55,7 @@ public class OrdersControllerTest {
                 .driverId(321l)
                 .origin("X")
                 .destination("Y")
-                .departureTime(ZonedDateTime.now().plusMinutes(30))
+                .departureTime(LocalDateTime.now().plusMinutes(30))
                 .build();
 
         given(ordersService.createOrder(any(OrderEntity.class)))
