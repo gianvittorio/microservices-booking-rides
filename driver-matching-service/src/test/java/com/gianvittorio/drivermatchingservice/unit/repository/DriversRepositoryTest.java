@@ -149,7 +149,7 @@ public class DriversRepositoryTest {
     public void findFirstAvailableDriverWithLesserRating() {
 
         // Given
-        final int rating = 5;
+        final int rating = 4;
 
         final DriverEntity driverEntity = DriverEntity.builder()
                 .document("000.000.000-01")
