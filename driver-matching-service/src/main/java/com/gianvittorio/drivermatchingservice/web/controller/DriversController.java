@@ -1,9 +1,9 @@
 package com.gianvittorio.drivermatchingservice.web.controller;
 
+import com.gianvittorio.common.web.dto.drivers.DriverRequestDTO;
+import com.gianvittorio.common.web.dto.drivers.DriverResponseDTO;
 import com.gianvittorio.drivermatchingservice.domain.entity.DriverEntity;
 import com.gianvittorio.drivermatchingservice.service.DriversService;
-import com.gianvittorio.drivermatchingservice.web.dto.DriverRequestDTO;
-import com.gianvittorio.drivermatchingservice.web.dto.DriverResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;

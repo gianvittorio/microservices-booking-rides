@@ -1,4 +1,4 @@
-package com.gianvittorio.usersservice.web.dto;
+package com.gianvittorio.common.web.dto.users;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserRequestDTO {
+public class UserResponseDTO {
+
+    private Long id;
 
     private String firstname;
 
@@ -20,4 +22,6 @@ public class UserRequestDTO {
     private String phone;
 
     private String email;
+
+    private Integer rating;
 }

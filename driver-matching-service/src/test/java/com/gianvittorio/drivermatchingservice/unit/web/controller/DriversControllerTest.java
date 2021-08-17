@@ -1,9 +1,9 @@
 package com.gianvittorio.drivermatchingservice.unit.web.controller;
 
+import com.gianvittorio.common.web.dto.drivers.DriverRequestDTO;
 import com.gianvittorio.drivermatchingservice.domain.entity.DriverEntity;
 import com.gianvittorio.drivermatchingservice.service.DriversService;
 import com.gianvittorio.drivermatchingservice.web.controller.DriversController;
-import com.gianvittorio.drivermatchingservice.web.dto.DriverRequestDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

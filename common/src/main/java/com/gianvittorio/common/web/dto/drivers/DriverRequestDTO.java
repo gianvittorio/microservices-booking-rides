@@ -1,4 +1,4 @@
-package com.gianvittorio.usersservice.web.dto;
+package com.gianvittorio.common.web.dto.drivers;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserResponseDTO {
-
-    private Long id;
+public class DriverRequestDTO {
 
     private String firstname;
 
@@ -22,6 +20,12 @@ public class UserResponseDTO {
     private String phone;
 
     private String email;
+
+    private String category;
+
+    private String location;
+
+    private Boolean isAvailable;
 
     private Integer rating;
 }

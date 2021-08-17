@@ -1,6 +1,5 @@
 package com.gianvittorio.orderservice.unit.web.controller;
 
-import com.gianvittorio.common.domain.Category;
 import com.gianvittorio.orderservice.domain.entity.OrderEntity;
 import com.gianvittorio.orderservice.service.OrdersService;
 import com.gianvittorio.orderservice.web.controller.OrdersController;
@@ -43,7 +42,7 @@ public class OrdersControllerTest {
         // Given
         final OrderRequestDTO orderRequestDTO = OrderRequestDTO.builder()
                 .document("05306757901")
-                .category(Category.COMFORT)
+                .category("comfort")
                 .origin("X")
                 .destination("Y")
                 .departureTime(LocalDateTime.now().plusMinutes(30))

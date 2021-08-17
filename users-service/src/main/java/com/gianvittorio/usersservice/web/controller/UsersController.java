@@ -1,9 +1,9 @@
 package com.gianvittorio.usersservice.web.controller;
 
+import com.gianvittorio.common.web.dto.users.UserRequestDTO;
+import com.gianvittorio.common.web.dto.users.UserResponseDTO;
 import com.gianvittorio.usersservice.domain.entity.UserEntity;
 import com.gianvittorio.usersservice.service.UsersService;
-import com.gianvittorio.usersservice.web.dto.UserRequestDTO;
-import com.gianvittorio.usersservice.web.dto.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;

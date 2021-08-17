@@ -1,4 +1,4 @@
-package com.gianvittorio.drivermatchingservice.web.dto;
+package com.gianvittorio.common.web.dto.drivers;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

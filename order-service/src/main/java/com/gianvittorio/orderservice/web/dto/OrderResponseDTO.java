@@ -20,4 +20,6 @@ public class OrderResponseDTO {
     private LocalDateTime departureTime;
 
     private String driverName;
+
+    private String status;
 }

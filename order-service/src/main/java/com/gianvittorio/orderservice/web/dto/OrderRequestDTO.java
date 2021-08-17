@@ -1,6 +1,5 @@
 package com.gianvittorio.orderservice.web.dto;
 
-import com.gianvittorio.common.domain.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +19,7 @@ public class OrderRequestDTO {
 
     private String destination;
 
-    private Category category;
+    private String category;
 
     private Boolean isBooked;
 

@@ -1,10 +1,9 @@
 package com.gianvittorio.usersservice.unit.web.controller;
 
+import com.gianvittorio.common.web.dto.users.UserRequestDTO;
 import com.gianvittorio.usersservice.domain.entity.UserEntity;
 import com.gianvittorio.usersservice.service.UsersService;
 import com.gianvittorio.usersservice.web.controller.UsersController;
-import com.gianvittorio.usersservice.web.dto.UserRequestDTO;
-import com.gianvittorio.usersservice.web.dto.UserResponseDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
