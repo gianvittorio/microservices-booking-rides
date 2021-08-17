@@ -21,6 +21,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.*;
 
 @ActiveProfiles("test")
@@ -35,11 +36,35 @@ public class OrdersControllerTest {
     @MockBean
     OrdersService ordersService;
 
+//    @Test
+//    @DisplayName("Hello World")
+//    public void helloWorldTest() {
+//        // Given
+//
+//        // When
+//
+//        // Then
+//        final String uriString = UriComponentsBuilder.newInstance()
+//                .scheme("http")
+//                .host("localhost")
+//                .port("8081")
+//                .path("orders")
+//                .build()
+//                .toUriString();
+//
+//        webTestClient.get()
+//                .uri(uriString)
+//                .exchange()
+//                .expectStatus().isOk()
+//                .returnResult(String.class)
+//                .consumeWith(response -> assertThat(response.getResponseBody()).isEqualTo("hello world!!!"));
+//    }
+
     @Test
     @DisplayName("Just a silly test")
     public void givenValidRequestthenReturnValidResponse() {
 
-        // Given
+// Given
         final OrderRequestDTO orderRequestDTO = OrderRequestDTO.builder()
                 .document("05306757901")
                 .category("comfort")
@@ -61,7 +86,7 @@ public class OrdersControllerTest {
                 .willReturn(Mono.just(orderEntity));
 
 
-        // When and Then
+// When and Then
         final String uriString = UriComponentsBuilder
                 .newInstance()
                 .scheme("http")
