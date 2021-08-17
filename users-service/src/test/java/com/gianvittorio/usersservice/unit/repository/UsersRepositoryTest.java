@@ -41,16 +41,19 @@ public class UsersRepositoryTest {
                 .firstname("Jane")
                 .lastname("Doe")
                 .phone("+5547900000000")
+                .rating(3)
                 .email("jane.doe@nowhere.net")
                 .build();
 
         // When and Then
-        databaseClient.sql("INSERT INTO users (firstname, lastname, document, phone, email) VALUES (:firstname, :lastname, :document, :phone, :email)")
+        databaseClient
+                .sql("INSERT INTO users (firstname, lastname, document, phone, email, rating) VALUES (:firstname, :lastname, :document, :phone, :email, :rating)")
                 .bind("firstname", userEntity.getFirstname())
                 .bind("lastname", userEntity.getLastname())
                 .bind("document", userEntity.getDocument())
                 .bind("phone", userEntity.getPhone())
                 .bind("email", userEntity.getEmail())
+                .bind("rating", userEntity.getRating())
                 .then()
                 .thenMany(this.repository.findByDocument(userEntity.getDocument()))
                 .take(1)
@@ -66,6 +69,8 @@ public class UsersRepositoryTest {
                             .isEqualTo(userEntity.getPhone());
                     assertThat(entity.getEmail())
                             .isEqualTo(userEntity.getEmail());
+                    assertThat(entity.getRating())
+                            .isEqualTo(userEntity.getRating());
                 })
                 .verifyComplete();
     }
@@ -81,6 +86,7 @@ public class UsersRepositoryTest {
                 .lastname("Doe")
                 .phone("+5547900000000")
                 .email("jane.doe@nowhere.net")
+                .rating(3)
                 .build();
 
         // When and Then
@@ -99,6 +105,8 @@ public class UsersRepositoryTest {
                             .isEqualTo(userEntity.getPhone());
                     assertThat(entity.getEmail())
                             .isEqualTo(userEntity.getEmail());
+                    assertThat(entity.getRating())
+                            .isEqualTo(userEntity.getRating());
                 })
                 .verifyComplete();
     }
@@ -114,17 +122,20 @@ public class UsersRepositoryTest {
                 .lastname("Doe")
                 .phone("+5547900000000")
                 .email("jane.doe@nowhere.net")
+                .rating(3)
                 .build();
 
         final String lastname = "Smith";
 
         // When and Then
-        databaseClient.sql("INSERT INTO users (firstname, lastname, document, phone, email) VALUES (:firstname, :lastname, :document, :phone, :email)")
+        databaseClient
+                .sql("INSERT INTO users (firstname, lastname, document, phone, email, rating) VALUES (:firstname, :lastname, :document, :phone, :email, :rating)")
                 .bind("firstname", userEntity.getFirstname())
                 .bind("lastname", userEntity.getLastname())
                 .bind("document", userEntity.getDocument())
                 .bind("phone", userEntity.getPhone())
                 .bind("email", userEntity.getEmail())
+                .bind("rating", userEntity.getRating())
                 .then()
                 .thenMany(this.repository.findByDocument(userEntity.getDocument()))
                 .take(1)
