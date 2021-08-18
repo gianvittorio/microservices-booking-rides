@@ -32,8 +32,6 @@ public class OrdersController {
     @GetMapping(path = "/users/{document}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<UserResponseDTO> findUserByDocument(@PathVariable("document") final String document) {
 
-        log.info("Accusi: {}", document);
-
         return usersService.findUserByDocument(document);
     }
 
@@ -49,22 +47,37 @@ public class OrdersController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<OrderResponseDTO> createOrder(@RequestBody final OrderRequestDTO orderRequestDTO) {
 
-        OrderEntity orderEntity = OrderEntity.builder()
-                .passengerId(123l)
-                .driverId(321l)
-                .origin("X")
-                .destination("Y")
-                .departureTime(LocalDateTime.now().plusMinutes(30))
-                .build();
+        return usersService.findUserByDocument(orderRequestDTO.getDocument())
+                .flatMap(user -> {
 
-        return ordersService.createOrder(orderEntity)
-                .map(entity ->
-                        OrderResponseDTO.builder()
-                                .orderId(entity.getId())
-                                .createdAt(LocalDateTime.now())
-                                .departureTime(entity.getDepartureTime())
-                                .driverName("ciccio broccolo")
-                                .build()
-                );
+                    log.info("user: {}; {}; {}", user.getRating(), user.getDocument(), orderRequestDTO.getDepartureTime());
+
+                    Mono<String> driverNameMono = driversService.findAvailableDriver(orderRequestDTO.getCategory(), orderRequestDTO.getOrigin(), user.getRating())
+                            .map(driver -> {
+                                log.info("driver: {}; {}; {}; {}", driver.getFirstname(), driver.getCategory(), driver.getLocation(), driver.getRating());
+
+                                return driver;
+                            })
+                            .map(DriverResponseDTO::getFirstname);
+
+                    return driverNameMono.map(
+                            driverName -> OrderResponseDTO
+                                    .builder()
+                                    .orderId(123l)
+                                    .driverName(driverName)
+                                    .departureTime(orderRequestDTO.getDepartureTime())
+                                    .createdAt(LocalDateTime.now())
+                                    .status("pending")
+                                    .build()
+                    );
+                });
+
+//        OrderEntity orderEntity = OrderEntity.builder()
+//                .passengerId(123l)
+//                .driverId(321l)
+//                .origin("X")
+//                .destination("Y")
+//                .departureTime(LocalDateTime.now().plusMinutes(30))
+//                .build();
     }
 }

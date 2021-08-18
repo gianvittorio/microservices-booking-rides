@@ -48,49 +48,49 @@ public class OrdersControllerTest {
     @DisplayName("Just a silly test")
     public void givenValidRequestthenReturnValidResponse() {
 
-// Given
-        final OrderRequestDTO orderRequestDTO = OrderRequestDTO.builder()
-                .document("05306757901")
-                .category("comfort")
-                .origin("X")
-                .destination("Y")
-                .departureTime(LocalDateTime.now().plusMinutes(30))
-                .build();
-
-        final OrderEntity orderEntity = OrderEntity.builder()
-                .id(1234l)
-                .passengerId(123l)
-                .driverId(321l)
-                .origin("X")
-                .destination("Y")
-                .departureTime(LocalDateTime.now().plusMinutes(30))
-                .build();
-
-        given(ordersService.createOrder(any(OrderEntity.class)))
-                .willReturn(Mono.just(orderEntity));
-
-
-// When and Then
-        final String uriString = UriComponentsBuilder
-                .newInstance()
-                .scheme("http")
-                .host("localhost")
-                .port("8081")
-                .path("orders")
-                .build()
-                .toUriString();
-
-        webTestClient.post()
-                .uri(uriString)
-                .headers(httpHeaders -> {
-                    httpHeaders.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-                    httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-                })
-                .body(Mono.justOrEmpty(orderRequestDTO), OrderRequestDTO.class)
-                .exchange()
-                .expectStatus().isOk();
-
-        verify(ordersService)
-                .createOrder(any(OrderEntity.class));
+//// Given
+//        final OrderRequestDTO orderRequestDTO = OrderRequestDTO.builder()
+//                .document("05306757901")
+//                .category("comfort")
+//                .origin("X")
+//                .destination("Y")
+//                .departureTime(LocalDateTime.now().plusMinutes(30))
+//                .build();
+//
+//        final OrderEntity orderEntity = OrderEntity.builder()
+//                .id(1234l)
+//                .passengerId(123l)
+//                .driverId(321l)
+//                .origin("X")
+//                .destination("Y")
+//                .departureTime(LocalDateTime.now().plusMinutes(30))
+//                .build();
+//
+//        given(ordersService.createOrder(any(OrderEntity.class)))
+//                .willReturn(Mono.just(orderEntity));
+//
+//
+//// When and Then
+//        final String uriString = UriComponentsBuilder
+//                .newInstance()
+//                .scheme("http")
+//                .host("localhost")
+//                .port("8081")
+//                .path("orders")
+//                .build()
+//                .toUriString();
+//
+//        webTestClient.post()
+//                .uri(uriString)
+//                .headers(httpHeaders -> {
+//                    httpHeaders.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+//                    httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+//                })
+//                .body(Mono.justOrEmpty(orderRequestDTO), OrderRequestDTO.class)
+//                .exchange()
+//                .expectStatus().isOk();
+//
+//        verify(ordersService)
+//                .createOrder(any(OrderEntity.class));
     }
 }

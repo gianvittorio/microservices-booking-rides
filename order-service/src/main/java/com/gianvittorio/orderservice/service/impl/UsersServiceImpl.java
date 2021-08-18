@@ -28,8 +28,6 @@ public class UsersServiceImpl implements UsersService {
                 .build()
                 .toUriString();
 
-        log.info("Accula: {}", uriString);
-
         return webClient.get()
                 .uri(uriString)
                 .retrieve()
