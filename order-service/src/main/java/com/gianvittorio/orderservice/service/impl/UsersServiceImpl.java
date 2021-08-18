@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -16,14 +17,21 @@ public class UsersServiceImpl implements UsersService {
 
     private final WebClient webClient;
 
-    @Value("{app.user-service.path}")
+    @Value("${app.users-service.path}")
     private String path;
 
     @Override
     public Mono<UserResponseDTO> findUserByDocument(final String document) {
 
+        final String uriString = UriComponentsBuilder.newInstance()
+                .path(path.concat("/").concat(document))
+                .build()
+                .toUriString();
+
+        log.info("Accula: {}", uriString);
+
         return webClient.get()
-                .uri(path.concat("/").concat(document))
+                .uri(uriString)
                 .retrieve()
                 .bodyToMono(UserResponseDTO.class);
     }

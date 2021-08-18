@@ -1,9 +1,11 @@
 package com.gianvittorio.orderservice.web.controller;
 
 import com.gianvittorio.common.web.dto.drivers.DriverResponseDTO;
+import com.gianvittorio.common.web.dto.users.UserResponseDTO;
 import com.gianvittorio.orderservice.domain.entity.OrderEntity;
 import com.gianvittorio.orderservice.service.DriversService;
 import com.gianvittorio.orderservice.service.OrdersService;
+import com.gianvittorio.orderservice.service.UsersService;
 import com.gianvittorio.orderservice.web.dto.OrderRequestDTO;
 import com.gianvittorio.orderservice.web.dto.OrderResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -23,21 +25,22 @@ public class OrdersController {
 
     private final OrdersService ordersService;
 
+    private final UsersService usersService;
+
     private final DriversService driversService;
 
-//    @GetMapping(produces = MediaType.TEXT_PLAIN_VALUE)
-//    @ResponseStatus(HttpStatus.OK)
-//    public Mono<String> helloWorld() {
-//        return Mono.just("hello world!!!");
-//    }
+    @GetMapping(path = "/users/{document}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<UserResponseDTO> findUserByDocument(@PathVariable("document") final String document) {
+
+        log.info("Accusi: {}", document);
+
+        return usersService.findUserByDocument(document);
+    }
 
     @GetMapping(path = "/drivers/search", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<DriverResponseDTO>> findFirstAvailableDriver(@RequestParam("category") final String category,
                                                                             @RequestParam("location") final String location,
                                                                             @RequestParam("rating") final Integer rating) {
-
-        log.info("Accusi: {}, {}, {}", category, location, rating);
-
         return driversService.findAvailableDriver(category, location, rating)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());

@@ -30,8 +30,6 @@ public class DriversServiceImpl implements DriversService {
                 .build()
                 .toUriString();
 
-        log.info("Accula: {}", uriString);
-
         return webClient.get()
                 .uri(uriString)
                 .retrieve()

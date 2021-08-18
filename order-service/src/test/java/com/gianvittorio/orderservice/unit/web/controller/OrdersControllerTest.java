@@ -3,6 +3,7 @@ package com.gianvittorio.orderservice.unit.web.controller;
 import com.gianvittorio.orderservice.domain.entity.OrderEntity;
 import com.gianvittorio.orderservice.service.DriversService;
 import com.gianvittorio.orderservice.service.OrdersService;
+import com.gianvittorio.orderservice.service.UsersService;
 import com.gianvittorio.orderservice.web.controller.OrdersController;
 import com.gianvittorio.orderservice.web.dto.OrderRequestDTO;
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +37,9 @@ public class OrdersControllerTest {
 
     @MockBean
     OrdersService ordersService;
+
+    @MockBean
+    UsersService usersService;
 
     @MockBean
     DriversService driversService;
