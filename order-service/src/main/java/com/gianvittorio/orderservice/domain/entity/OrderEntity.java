@@ -11,7 +11,6 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 @Data
 @NoArgsConstructor

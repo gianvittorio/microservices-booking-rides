@@ -1,6 +1,6 @@
 package com.gianvittorio.orderservice.web.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,21 +14,16 @@ import java.time.LocalDateTime;
 @Builder
 public class OrderRequestDTO {
 
-    @JsonProperty("document")
     private String document;
 
-    @JsonProperty("origin")
     private String origin;
 
-    @JsonProperty("destination")
     private String destination;
 
-    @JsonProperty("category")
     private String category;
 
-    @JsonProperty("is_booked")
-    private Boolean isBooked;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime departure;
 
-    @JsonProperty("departure_time")
-    private LocalDateTime departureTime;
+    private Boolean isBooked;
 }

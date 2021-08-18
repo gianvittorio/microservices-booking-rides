@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class OrderResponseDTO {
 
-    private Long orderId;
+    private Long id;
 
     private LocalDateTime createdAt;
 

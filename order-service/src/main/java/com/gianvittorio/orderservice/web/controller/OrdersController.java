@@ -10,6 +10,7 @@ import com.gianvittorio.orderservice.web.dto.OrderRequestDTO;
 import com.gianvittorio.orderservice.web.dto.OrderResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,39 +46,47 @@ public class OrdersController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<OrderResponseDTO> createOrder(@RequestBody final OrderRequestDTO orderRequestDTO) {
+    public Mono<ResponseEntity<OrderResponseDTO>> createOrder(@RequestBody final OrderRequestDTO orderRequestDTO) {
 
-        return usersService.findUserByDocument(orderRequestDTO.getDocument())
+        final Mono<OrderEntity> orderEntityMono = usersService.findUserByDocument(orderRequestDTO.getDocument())
                 .flatMap(user -> {
 
-                    log.info("user: {}; {}; {}", user.getRating(), user.getDocument(), orderRequestDTO.getDepartureTime());
+                    log.info("user: {}; {}; {}, {}", user.getRating(), orderRequestDTO.getDocument(), orderRequestDTO.getDeparture(), orderRequestDTO.getOrigin());
 
-                    Mono<String> driverNameMono = driversService.findAvailableDriver(orderRequestDTO.getCategory(), orderRequestDTO.getOrigin(), user.getRating())
+                    final Mono<DriverResponseDTO> driverMono = driversService.findAvailableDriver(orderRequestDTO.getCategory(), orderRequestDTO.getOrigin(), user.getRating())
                             .map(driver -> {
                                 log.info("driver: {}; {}; {}; {}", driver.getFirstname(), driver.getCategory(), driver.getLocation(), driver.getRating());
 
                                 return driver;
-                            })
-                            .map(DriverResponseDTO::getFirstname);
+                            });
 
-                    return driverNameMono.map(
-                            driverName -> OrderResponseDTO
-                                    .builder()
-                                    .orderId(123l)
-                                    .driverName(driverName)
-                                    .departureTime(orderRequestDTO.getDepartureTime())
-                                    .createdAt(LocalDateTime.now())
-                                    .status("pending")
-                                    .build()
-                    );
+                    return driverMono.flatMap(driver -> {
+                        final OrderEntity orderEntity = OrderEntity.builder()
+                                .passengerId(user.getId())
+                                .driverId(driver.getId())
+                                .origin(orderRequestDTO.getOrigin())
+                                .destination(orderRequestDTO.getDestination())
+                                .departureTime(orderRequestDTO.getDeparture())
+                                .status("pending")
+                                .build();
+
+                        return ordersService.createOrder(orderEntity);
+                    });
                 });
 
-//        OrderEntity orderEntity = OrderEntity.builder()
-//                .passengerId(123l)
-//                .driverId(321l)
-//                .origin("X")
-//                .destination("Y")
-//                .departureTime(LocalDateTime.now().plusMinutes(30))
-//                .build();
+        final Mono<OrderResponseDTO> orderResponseMono = orderEntityMono.map(
+                orderEntity -> {
+                    final OrderResponseDTO orderResponseDTO = OrderResponseDTO.builder()
+                            .id(orderEntity.getId())
+                            .departureTime(orderEntity.getDepartureTime())
+                            .status(orderEntity.getStatus())
+                            .createdAt(LocalDateTime.now())
+                            .build();
+
+                    return orderResponseDTO;
+                });
+
+        return orderResponseMono.map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 }
