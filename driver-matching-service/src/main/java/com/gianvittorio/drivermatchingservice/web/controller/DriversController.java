@@ -34,7 +34,7 @@ public class DriversController {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @GetMapping(path = "/get", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<DriverResponseDTO>> findFirstAvailableDriver(
             @RequestParam("category") final String category,
             @RequestParam("location") final String location,

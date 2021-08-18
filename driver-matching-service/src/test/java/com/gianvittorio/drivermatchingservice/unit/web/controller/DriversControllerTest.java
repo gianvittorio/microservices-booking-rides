@@ -118,7 +118,7 @@ public class DriversControllerTest {
                 .scheme("http")
                 .host("localhost")
                 .port("8081")
-                .path("drivers".concat("/get"))
+                .path("drivers".concat("/search"))
                 .queryParam("category", category)
                 .queryParam("location", location)
                 .queryParam("rating", rating)

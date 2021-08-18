@@ -30,14 +30,8 @@ services:
     restart: always
     depends_on:
       - discovery-service
-      - order-service
-      - users-service
-      - driver-matching-service
     links:
       - discovery-service
-      - order-service
-      - users-service
-      - driver-matching-service
 
   order-service:
     #container_name: "order-service"
@@ -54,6 +48,7 @@ services:
     links:
       - order-service-postgres
       - discovery-service
+      - api-gateway
 
   order-service-postgres:
     container_name: order-service-postgres

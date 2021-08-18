@@ -16,11 +16,15 @@ public class UsersServiceImpl implements UsersService {
 
     private final WebClient webClient;
 
-    @Value("{app.user-service.instance-name}")
-    private String hostname;
+    @Value("{app.user-service.path}")
+    private String path;
 
     @Override
-    public Mono<UserResponseDTO> findUserByDocument(String document) {
-        return null;
+    public Mono<UserResponseDTO> findUserByDocument(final String document) {
+
+        return webClient.get()
+                .uri(path.concat("/").concat(document))
+                .retrieve()
+                .bodyToMono(UserResponseDTO.class);
     }
 }

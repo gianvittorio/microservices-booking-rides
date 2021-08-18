@@ -1,6 +1,7 @@
 package com.gianvittorio.orderservice.unit.web.controller;
 
 import com.gianvittorio.orderservice.domain.entity.OrderEntity;
+import com.gianvittorio.orderservice.service.DriversService;
 import com.gianvittorio.orderservice.service.OrdersService;
 import com.gianvittorio.orderservice.web.controller.OrdersController;
 import com.gianvittorio.orderservice.web.dto.OrderRequestDTO;
@@ -36,29 +37,8 @@ public class OrdersControllerTest {
     @MockBean
     OrdersService ordersService;
 
-//    @Test
-//    @DisplayName("Hello World")
-//    public void helloWorldTest() {
-//        // Given
-//
-//        // When
-//
-//        // Then
-//        final String uriString = UriComponentsBuilder.newInstance()
-//                .scheme("http")
-//                .host("localhost")
-//                .port("8081")
-//                .path("orders")
-//                .build()
-//                .toUriString();
-//
-//        webTestClient.get()
-//                .uri(uriString)
-//                .exchange()
-//                .expectStatus().isOk()
-//                .returnResult(String.class)
-//                .consumeWith(response -> assertThat(response.getResponseBody()).isEqualTo("hello world!!!"));
-//    }
+    @MockBean
+    DriversService driversService;
 
     @Test
     @DisplayName("Just a silly test")
