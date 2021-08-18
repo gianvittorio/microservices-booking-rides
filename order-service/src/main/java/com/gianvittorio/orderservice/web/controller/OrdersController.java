@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @RestController
 @RequestMapping("/orders")
@@ -48,17 +49,34 @@ public class OrdersController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<OrderResponseDTO>> createOrder(@RequestBody final OrderRequestDTO orderRequestDTO) {
 
-        final Mono<OrderEntity> orderEntityMono = usersService.findUserByDocument(orderRequestDTO.getDocument())
+
+        final Mono<OrderEntity> orderEntityMono = Mono.just(orderRequestDTO)
+                .flatMap(this::aggregate);
+
+        final Mono<OrderResponseDTO> orderResponseMono = orderEntityMono.map(
+                orderEntity -> {
+                    final OrderResponseDTO orderResponseDTO = OrderResponseDTO.builder()
+                            .id(orderEntity.getId())
+                            .departureTime(orderEntity.getDepartureTime())
+                            .status(orderEntity.getStatus())
+                            .createdAt(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")))
+                            .build();
+
+                    return orderResponseDTO;
+                });
+
+        return orderResponseMono.map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    private Mono<OrderEntity> aggregate(final OrderRequestDTO orderRequestDTO) {
+        return usersService.findUserByDocument(orderRequestDTO.getDocument())
                 .flatMap(user -> {
 
-                    log.info("user: {}; {}; {}, {}", user.getRating(), orderRequestDTO.getDocument(), orderRequestDTO.getDeparture(), orderRequestDTO.getOrigin());
+                    //log.info("user: {}; {}; {}, {}", user.getRating(), orderRequestDTO.getDocument(), orderRequestDTO.getDeparture(), orderRequestDTO.getOrigin());
 
-                    final Mono<DriverResponseDTO> driverMono = driversService.findAvailableDriver(orderRequestDTO.getCategory(), orderRequestDTO.getOrigin(), user.getRating())
-                            .map(driver -> {
-                                log.info("driver: {}; {}; {}; {}", driver.getFirstname(), driver.getCategory(), driver.getLocation(), driver.getRating());
-
-                                return driver;
-                            });
+                    final Mono<DriverResponseDTO> driverMono = driversService.findAvailableDriver(orderRequestDTO.getCategory(), orderRequestDTO.getOrigin(), user.getRating());
+                    //.doOnNext(driver -> log.info("driver: {}; {}; {}; {}", driver.getFirstname(), driver.getCategory(), driver.getLocation(), driver.getRating()));
 
                     return driverMono.flatMap(driver -> {
                         final OrderEntity orderEntity = OrderEntity.builder()
@@ -73,20 +91,5 @@ public class OrdersController {
                         return ordersService.createOrder(orderEntity);
                     });
                 });
-
-        final Mono<OrderResponseDTO> orderResponseMono = orderEntityMono.map(
-                orderEntity -> {
-                    final OrderResponseDTO orderResponseDTO = OrderResponseDTO.builder()
-                            .id(orderEntity.getId())
-                            .departureTime(orderEntity.getDepartureTime())
-                            .status(orderEntity.getStatus())
-                            .createdAt(LocalDateTime.now())
-                            .build();
-
-                    return orderResponseDTO;
-                });
-
-        return orderResponseMono.map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 }
