@@ -1,8 +1,10 @@
 package com.gianvittorio.orderservice.exceptions;
 
-import lombok.Value;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-@Value
+@Getter
+@EqualsAndHashCode
 public class ServiceException extends RuntimeException {
 
     private final int statusCode;

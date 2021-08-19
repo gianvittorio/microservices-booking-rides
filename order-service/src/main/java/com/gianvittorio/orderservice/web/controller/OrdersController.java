@@ -8,13 +8,11 @@ import com.gianvittorio.orderservice.service.UsersService;
 import com.gianvittorio.orderservice.web.dto.OrderRequestDTO;
 import com.gianvittorio.orderservice.web.dto.OrderResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,18 +35,35 @@ public class OrdersController {
 
     private final DriversService driversService;
 
+    @GetMapping(path = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<OrderResponseDTO>> findOrderById(@PathVariable("id") Long id) {
+        return ordersService.findById(id)
+                .map(orderEntity -> {
+                    final OrderResponseDTO orderResponseDTO = new OrderResponseDTO();
+                    BeanUtils.copyProperties(orderEntity, orderResponseDTO);
+
+                    return orderResponseDTO;
+                })
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create Order")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Order set for creation"),
-            @ApiResponse(responseCode = "400", description = "Request body is either null or malformed"),
-            @ApiResponse(responseCode = "404", description = "Either User not found")
+            @ApiResponse(responseCode = "400", description = "Request body is either null or malformed")
     })
     public Mono<ResponseEntity<OrderResponseDTO>> createOrder(@RequestBody final OrderRequestDTO orderRequestDTO) {
 
 
         final Mono<OrderEntity> orderEntityMono = Mono.just(orderRequestDTO)
-                .flatMap(this::aggregate);
+                .flatMap(this::aggregate)
+                .onErrorMap(error -> {
+                    log.error(error);
+
+                    return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error);
+                });
 
         final Mono<OrderResponseDTO> orderResponseMono = orderEntityMono.map(
                 orderEntity -> {
@@ -62,8 +77,7 @@ public class OrdersController {
                     return orderResponseDTO;
                 });
 
-        return orderResponseMono.map(ResponseEntity::ok)
-                .onErrorMap(error -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error));
+        return orderResponseMono.map(ResponseEntity::ok);
     }
 
     private Mono<OrderEntity> aggregate(final OrderRequestDTO orderRequestDTO) {
@@ -83,7 +97,6 @@ public class OrdersController {
 
                         return ordersService.save(orderEntity);
                     });
-                })
-                .onErrorMap(error -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error));
+                });
     }
 }

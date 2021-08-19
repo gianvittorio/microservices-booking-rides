@@ -19,6 +19,11 @@ public class OrderServiceImpl implements OrdersService {
     private final OrdersRepository ordersRepository;
 
     @Override
+    public Mono<OrderEntity> findById(final Long id) {
+        return ordersRepository.findById(id);
+    }
+
+    @Override
     public Mono<OrderEntity> save(final OrderEntity orderEntity) {
 
         return ordersRepository.save(orderEntity);

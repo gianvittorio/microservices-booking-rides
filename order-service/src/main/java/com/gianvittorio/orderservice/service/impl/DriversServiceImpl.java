@@ -1,8 +1,10 @@
 package com.gianvittorio.orderservice.service.impl;
 
 import com.gianvittorio.common.web.dto.drivers.DriverResponseDTO;
+import com.gianvittorio.orderservice.exceptions.DriverNotFoundException;
 import com.gianvittorio.orderservice.exceptions.NetworkException;
 import com.gianvittorio.orderservice.exceptions.ServiceException;
+import com.gianvittorio.orderservice.exceptions.UserNotFoundException;
 import com.gianvittorio.orderservice.service.DriversService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -37,6 +39,7 @@ public class DriversServiceImpl implements DriversService {
         return webClient.get()
                 .uri(uriString)
                 .retrieve()
+                .onStatus(HttpStatus::is4xxClientError, response -> Mono.error(new DriverNotFoundException("Driver was not found", HttpStatus.NOT_FOUND.value())))
                 .onStatus(HttpStatus::is5xxServerError, response -> Mono.error(new NetworkException(String.valueOf(response.rawStatusCode()))))
                 .bodyToMono(DriverResponseDTO.class)
                 .retryWhen(Retry.backoff(3, Duration.ofSeconds(2))
@@ -57,6 +60,7 @@ public class DriversServiceImpl implements DriversService {
         return webClient.get()
                 .uri(uriString)
                 .retrieve()
+                .onStatus(HttpStatus::is4xxClientError, response -> Mono.error(new DriverNotFoundException("Driver was not found", HttpStatus.NOT_FOUND.value())))
                 .onStatus(HttpStatus::is5xxServerError, response -> Mono.error(new NetworkException(String.valueOf(response.rawStatusCode()))))
                 .bodyToMono(DriverResponseDTO.class)
                 .retryWhen(Retry.backoff(3, Duration.ofSeconds(2))
@@ -79,6 +83,7 @@ public class DriversServiceImpl implements DriversService {
         return webClient.get()
                 .uri(uriString)
                 .retrieve()
+                .onStatus(HttpStatus::is4xxClientError, response -> Mono.error(new DriverNotFoundException("Driver was not found", HttpStatus.NOT_FOUND.value())))
                 .onStatus(HttpStatus::is5xxServerError, response -> Mono.error(new NetworkException(String.valueOf(response.rawStatusCode()))))
                 .bodyToMono(DriverResponseDTO.class)
                 .retryWhen(Retry.backoff(3, Duration.ofSeconds(2))
