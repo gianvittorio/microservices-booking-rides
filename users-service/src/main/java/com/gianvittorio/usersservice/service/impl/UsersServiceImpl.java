@@ -15,6 +15,10 @@ public class UsersServiceImpl implements UsersService {
 
     private final UsersRepository repository;
 
+    @Override
+    public Mono<UserEntity> findById(Long id) {
+        return repository.findById(id);
+    }
 
     @Override
     public Mono<UserEntity> findUserByDocument(final String document) {

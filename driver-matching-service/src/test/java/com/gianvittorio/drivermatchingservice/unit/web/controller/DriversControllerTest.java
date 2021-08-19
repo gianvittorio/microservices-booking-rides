@@ -38,7 +38,59 @@ public class DriversControllerTest {
     DriversService driversService;
 
     @Test
-    @DisplayName("Must return driver whenever searched by respective document")
+    @DisplayName("Must return driver by Id.")
+    public void findDriverByIdTest() {
+
+        // Given
+        final long driverId = 123l;
+
+        final DriverEntity driverEntity = DriverEntity.builder()
+                .id(driverId)
+                .document("000.000.000-00")
+                .firstname("Jane")
+                .lastname("Doe")
+                .phone("+5547900000000")
+                .email("jane.doe@nowhere.net")
+                .category("comfort")
+                .location("X")
+                .rating(0)
+                .isAvailable(true)
+                .build();
+
+        given(driversService.findById(driverId))
+                .willReturn(Mono.just(driverEntity));
+
+        // When and Then
+        final String uriString = UriComponentsBuilder
+                .newInstance()
+                .scheme("http")
+                .host("localhost")
+                .port("8081")
+                .path("drivers/id/".concat(String.valueOf(driverId)))
+                .build()
+                .toUriString();
+
+        webTestClient.get()
+                .uri(uriString)
+                .headers(httpHeaders -> {
+                    httpHeaders.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+                })
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.firstname").isEqualTo(driverEntity.getFirstname())
+                .jsonPath("$.lastname").isEqualTo(driverEntity.getLastname())
+                .jsonPath("$.phone").isEqualTo(driverEntity.getPhone())
+                .jsonPath("$.email").isEqualTo(driverEntity.getEmail())
+                .jsonPath("$.category").isEqualTo(driverEntity.getCategory())
+                .jsonPath("$.location").isEqualTo(driverEntity.getLocation());
+
+        verify(driversService)
+                .findById(driverId);
+    }
+
+    @Test
+    @DisplayName("Must return driver whenever searched by respective document.")
     public void findDriverByDocumentTest() {
 
         // Given
@@ -65,7 +117,7 @@ public class DriversControllerTest {
                 .scheme("http")
                 .host("localhost")
                 .port("8081")
-                .path("drivers/".concat(document))
+                .path("drivers/document/".concat(document))
                 .build()
                 .toUriString();
 

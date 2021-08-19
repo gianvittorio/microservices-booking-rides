@@ -21,10 +21,23 @@ public class UsersServiceImpl implements UsersService {
     private String path;
 
     @Override
+    public Mono<UserResponseDTO> findUserById(Long id) {
+        final String uriString = UriComponentsBuilder.newInstance()
+                .path(path.concat("/id/").concat(String.valueOf(id)))
+                .build()
+                .toUriString();
+
+        return webClient.get()
+                .uri(uriString)
+                .retrieve()
+                .bodyToMono(UserResponseDTO.class);
+    }
+
+    @Override
     public Mono<UserResponseDTO> findUserByDocument(final String document) {
 
         final String uriString = UriComponentsBuilder.newInstance()
-                .path(path.concat("/").concat(document))
+                .path(path.concat("/document/").concat(document))
                 .build()
                 .toUriString();
 

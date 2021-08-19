@@ -38,7 +38,53 @@ public class UsersControllerTest {
     UsersService usersService;
 
     @Test
-    @DisplayName("Must return user whenever searched by respective document")
+    @DisplayName("Must return user by id.")
+    public void findUserByIdTest() {
+
+        // Given
+        final long userId = 123l;
+
+        final UserEntity userEntity = UserEntity.builder()
+                .id(userId)
+                .firstname("John")
+                .lastname("Doe")
+                .document("000.000.000-00")
+                .phone("'+551190000000")
+                .email("john.doe@somewhere.net")
+                .build();
+
+        BDDMockito.given(usersService.findById(userEntity.getId()))
+                .willReturn(Mono.just(userEntity));
+
+        // When and Then
+        final String uriString = UriComponentsBuilder
+                .newInstance()
+                .scheme("http")
+                .host("localhost")
+                .port("8081")
+                .path("users/id/".concat(String.valueOf(userId)))
+                .build()
+                .toUriString();
+
+        webTestClient.get()
+                .uri(uriString)
+                .headers(httpHeaders -> {
+                    httpHeaders.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+                })
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.firstname").isEqualTo(userEntity.getFirstname())
+                .jsonPath("$.lastname").isEqualTo(userEntity.getLastname())
+                .jsonPath("$.phone").isEqualTo(userEntity.getPhone())
+                .jsonPath("$.email").isEqualTo(userEntity.getEmail());
+
+        verify(usersService)
+                .findById(userId);
+    }
+
+    @Test
+    @DisplayName("Must return user whenever searched by respective document.")
     public void findUserByDocumentTest() {
 
         // Given
@@ -61,7 +107,7 @@ public class UsersControllerTest {
                 .scheme("http")
                 .host("localhost")
                 .port("8081")
-                .path("users/".concat(document))
+                .path("users/document/".concat(document))
                 .build()
                 .toUriString();
 

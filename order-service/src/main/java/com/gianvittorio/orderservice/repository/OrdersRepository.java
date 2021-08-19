@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 @Repository
 public interface OrdersRepository extends ReactiveCrudRepository<OrderEntity, Long> {
+
     Flux<OrderEntity> findByPassengerIdAndDriverId(final Long passengerId, final Long driverId);
 
     Flux<OrderEntity> findByStatusAndDepartureTimeBetween(final String status, final LocalDateTime start, final LocalDateTime end);

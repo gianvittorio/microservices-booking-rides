@@ -16,6 +16,11 @@ public class DriversServiceImpl implements DriversService {
     final private DriversRepository driversRepository;
 
     @Override
+    public Mono<DriverEntity> findById(Long id) {
+        return driversRepository.findById(id);
+    }
+
+    @Override
     public Mono<DriverEntity> findFirstAvailable(final String category, final String location, final Integer rating) {
         return driversRepository.findFirstAvailable(category, location, rating);
     }

@@ -7,6 +7,8 @@ public interface DriversService {
 
     Mono<DriverEntity> findFirstAvailable(final String category, final String location, final Integer rating);
 
+    Mono<DriverEntity> findById(final Long id);
+
     Mono<DriverEntity> findByDocument(final String document);
 
     Mono<DriverEntity> save(final DriverEntity driverEntity);

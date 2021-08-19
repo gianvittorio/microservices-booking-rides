@@ -21,7 +21,20 @@ public class UsersController {
 
     private final UsersService usersService;
 
-    @GetMapping(path = "/{document}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<UserResponseDTO>> findUserById(@PathVariable("id") final Long id) {
+        return usersService.findById(id)
+                .map(userEntity -> {
+                    final UserResponseDTO userResponseDTO = new UserResponseDTO();
+                    BeanUtils.copyProperties(userEntity, userResponseDTO);
+
+                    return userResponseDTO;
+                })
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping(path = "/document/{document}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<UserResponseDTO>> findUserByDocument(@PathVariable("document") final String document) {
         return usersService.findUserByDocument(document)
                 .map(userEntity -> {

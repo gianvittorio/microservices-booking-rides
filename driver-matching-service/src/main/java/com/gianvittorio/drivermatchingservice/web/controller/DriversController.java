@@ -21,7 +21,20 @@ public class DriversController {
 
     private final DriversService driversService;
 
-    @GetMapping(path = "/{document}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<DriverResponseDTO>> findDriverById(@PathVariable("id") final Long id) {
+        return driversService.findById(id)
+                .map(driverEntity -> {
+                    final DriverResponseDTO driverResponseDTO = new DriverResponseDTO();
+                    BeanUtils.copyProperties(driverEntity, driverResponseDTO);
+
+                    return driverResponseDTO;
+                })
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping(path = "/document/{document}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<DriverResponseDTO>> findDriverByDocument(@PathVariable("document") final String document) {
         return driversService.findByDocument(document)
                 .map(driverEntity -> {

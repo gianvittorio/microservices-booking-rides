@@ -5,6 +5,8 @@ import reactor.core.publisher.Mono;
 
 public interface UsersService {
 
+    Mono<UserEntity> findById(final Long id);
+
     Mono<UserEntity> findUserByDocument(final String document);
 
     Mono<UserEntity> saveUser(final UserEntity user);

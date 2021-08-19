@@ -21,9 +21,37 @@ public class DriversServiceImpl implements DriversService {
     private String path;
 
     @Override
+    public Mono<DriverResponseDTO> findById(final Long id) {
+
+        final String uriString = UriComponentsBuilder.newInstance()
+                .path(path.concat("/id/").concat(String.valueOf(id)))
+                .build()
+                .toUriString();
+
+        return webClient.get()
+                .uri(uriString)
+                .retrieve()
+                .bodyToMono(DriverResponseDTO.class);
+    }
+
+    @Override
+    public Mono<DriverResponseDTO> findByDocument(final String document) {
+
+        final String uriString = UriComponentsBuilder.newInstance()
+                .path(path.concat("/document/").concat(document))
+                .build()
+                .toUriString();
+
+        return webClient.get()
+                .uri(uriString)
+                .retrieve()
+                .bodyToMono(DriverResponseDTO.class);
+    }
+
+    @Override
     public Mono<DriverResponseDTO> findAvailableDriver(final String category, final String location, final Integer rating) {
         final String uriString = UriComponentsBuilder.newInstance()
-                .path(path)
+                .path(path.concat("/search"))
                 .queryParam("category", category)
                 .queryParam("location", location)
                 .queryParam("rating", rating)
