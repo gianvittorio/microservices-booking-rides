@@ -33,9 +33,9 @@ public class UsersController {
 
                     return userResponseDTO;
                 })
-                .onErrorMap(error -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error))
                 .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+                .defaultIfEmpty(ResponseEntity.notFound().build())
+                .onErrorMap(error -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error));
     }
 
     @GetMapping(path = "/document/{document}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,9 +47,9 @@ public class UsersController {
 
                     return userResponseDTO;
                 })
-                .onErrorMap(error -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error))
                 .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+                .defaultIfEmpty(ResponseEntity.notFound().build())
+                .onErrorMap(error -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -68,8 +68,8 @@ public class UsersController {
 
                     return userResponseDTO;
                 })
-                .onErrorMap(error -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error))
-                .map(ResponseEntity::ok);
+                .map(ResponseEntity::ok)
+                .onErrorMap(error -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error));
     }
 
     @PutMapping(path = "/{document}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -87,9 +87,9 @@ public class UsersController {
 
                     return userResponseDTO;
                 })
-                .onErrorMap(error -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error))
                 .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+                .defaultIfEmpty(ResponseEntity.notFound().build())
+                .onErrorMap(error -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error));
     }
 
     @DeleteMapping("/{document}")
