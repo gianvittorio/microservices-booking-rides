@@ -237,8 +237,40 @@ public class UsersControllerTest {
     }
 
     @Test
-    @DisplayName("Must delete user.")
-    public void deleteUserTest() {
+    @DisplayName("Must delete user by id.")
+    public void deleteUserByIdTest() {
+
+        // Given
+        final long id = 123l;
+
+        BDDMockito.given(usersService.findById(id))
+                .willReturn(Mono.empty());
+
+        // When and Then
+        final String uriString = UriComponentsBuilder
+                .newInstance()
+                .scheme("http")
+                .host("localhost")
+                .port("8081")
+                .path("users/id/".concat(Long.toString(id)))
+                .build()
+                .toUriString();
+
+        webTestClient.delete()
+                .uri(uriString)
+                .headers(httpHeaders -> {
+                    httpHeaders.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+                })
+                .exchange()
+                .expectStatus().isNoContent();
+
+        verify(usersService)
+                .deleteUserById(id);
+    }
+
+    @Test
+    @DisplayName("Must delete user by document.")
+    public void deleteUserByDocumentTest() {
 
         // Given
         final String document = "000.000.000-00";
@@ -252,7 +284,7 @@ public class UsersControllerTest {
                 .scheme("http")
                 .host("localhost")
                 .port("8081")
-                .path("users/".concat(document))
+                .path("users/document/".concat(document))
                 .build()
                 .toUriString();
 

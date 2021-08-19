@@ -39,4 +39,9 @@ public class DriversServiceImpl implements DriversService {
     public Mono<Void> deleteByDocument(final String document) {
         return driversRepository.deleteByDocument(document);
     }
+
+    @Override
+    public Mono<Void> deleteById(Long id) {
+        return driversRepository.deleteById(id);
+    }
 }

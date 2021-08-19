@@ -14,4 +14,6 @@ public interface DriversService {
     Mono<DriverEntity> save(final DriverEntity driverEntity);
 
     Mono<Void> deleteByDocument(final String document);
+
+    Mono<Void> deleteById(final Long id);
 }

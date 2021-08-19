@@ -12,4 +12,6 @@ public interface UsersService {
     Mono<UserEntity> saveUser(final UserEntity user);
 
     Mono<Void> deleteUserByDocument(final String document);
+
+    Mono<Void> deleteUserById(final Long id);
 }

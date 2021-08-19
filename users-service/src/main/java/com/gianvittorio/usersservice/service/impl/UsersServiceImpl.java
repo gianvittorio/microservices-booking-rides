@@ -34,4 +34,9 @@ public class UsersServiceImpl implements UsersService {
     public Mono<Void> deleteUserByDocument(final String document) {
         return repository.deleteByDocument(document);
     }
+
+    @Override
+    public Mono<Void> deleteUserById(final Long id) {
+        return repository.deleteById(id);
+    }
 }

@@ -50,7 +50,7 @@ public class ScheduledDispatcher {
         final LocalDateTime start = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
         final LocalDateTime end = start.plusMinutes(30);
 
-        log.info("Triggering dispatch for all pending orders within timeframe: {} until {}", start, end);
+        log.info("Dispatching pending orders within timeframe: {} until {}", start, end);
 
         final Flux<OrderEntity> orderEntityFlux = ordersService.findByStatusAndDepartureTimeBetween("pending", start, end);
 
@@ -84,7 +84,8 @@ public class ScheduledDispatcher {
 
                     return ordersService.save(orderEntity);
                 })
-                .doOnComplete(() -> log.info("Successfully dispatched orders for timeframe: {} until {}", start, end))
+                .reduce(0, (totalOrders, i) -> ++totalOrders)
+                .doOnNext(totalOrders -> log.info("{} orders were processed.", totalOrders))
                 .subscribe();
     }
 

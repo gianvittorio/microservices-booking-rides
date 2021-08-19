@@ -34,4 +34,9 @@ public class OrderServiceImpl implements OrdersService {
         return ordersRepository.findByStatusAndDepartureTimeBetween(status, start, end)
                 .doOnError(log::error);
     }
+
+    @Override
+    public Mono<Void> deleteById(Long id) {
+        return ordersRepository.deleteById(id);
+    }
 }

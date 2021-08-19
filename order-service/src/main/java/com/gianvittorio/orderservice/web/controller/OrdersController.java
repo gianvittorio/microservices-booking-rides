@@ -36,6 +36,11 @@ public class OrdersController {
     private final DriversService driversService;
 
     @GetMapping(path = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Find order by Id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     public Mono<ResponseEntity<OrderResponseDTO>> findOrderById(@PathVariable("id") Long id) {
         return ordersService.findById(id)
                 .map(orderEntity -> {
@@ -49,7 +54,7 @@ public class OrdersController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Create Order")
+    @Operation(summary = "Create order")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Order set for creation"),
             @ApiResponse(responseCode = "400", description = "Request body is either null or malformed")
@@ -58,13 +63,14 @@ public class OrdersController {
 
 
         final Mono<OrderEntity> orderEntityMono = Mono.just(orderRequestDTO)
-                .flatMap(this::aggregate)
+                .flatMap(this::getOrderEntityMono)
                 .onErrorMap(error -> {
                     log.error(error);
 
                     return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error);
                 })
-                .doOnError(log::error);
+                .doOnError(log::error)
+                .flatMap(ordersService::save);
 
         final Mono<OrderResponseDTO> orderResponseMono = orderEntityMono.map(
                 orderEntity -> {
@@ -81,12 +87,61 @@ public class OrdersController {
         return orderResponseMono.map(ResponseEntity::ok);
     }
 
-    private Mono<OrderEntity> aggregate(final OrderRequestDTO orderRequestDTO) {
+    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Update order")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Order set for creation"),
+            @ApiResponse(responseCode = "404", description = "Order not found"),
+            @ApiResponse(responseCode = "400", description = "Request body is either null or malformed")
+    })
+    public Mono<ResponseEntity<OrderResponseDTO>> updateOrder(@PathVariable("id") final Long id, @RequestBody final OrderRequestDTO orderRequestDTO) {
+
+        final Mono<OrderEntity> newOrderEntityMono = Mono.just(orderRequestDTO)
+                .flatMap(this::getOrderEntityMono)
+                .onErrorMap(error -> {
+                    log.error(error);
+
+                    return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error);
+                })
+                .doOnError(log::error)
+                .filter(orderEntity -> orderEntity.getStatus().equals("pending"))
+                .flatMap(newOrderEntity -> {
+                    newOrderEntity.setId(id);
+                    return ordersService.save(newOrderEntity);
+                });
+
+        final Mono<OrderResponseDTO> orderResponseMono = newOrderEntityMono.map(
+                orderEntity -> {
+                    final OrderResponseDTO orderResponseDTO = OrderResponseDTO.builder()
+                            .id(orderEntity.getId())
+                            .departureTime(orderEntity.getDepartureTime())
+                            .status(orderEntity.getStatus())
+                            .createdAt(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")))
+                            .build();
+
+                    return orderResponseDTO;
+                });
+
+        return orderResponseMono.map(ResponseEntity::ok);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete order")
+    @ApiResponse(responseCode = "204", description = "No content")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> deleteOrder(@PathVariable("id") final Long id) {
+        return ordersService.findById(id)
+                .filter(orderEntity -> orderEntity.getStatus().equals("pending"))
+                .map(OrderEntity::getId)
+                .flatMap(ordersService::deleteById);
+    }
+
+    private Mono<OrderEntity> getOrderEntityMono(final OrderRequestDTO orderRequestDTO) {
         return usersService.findUserByDocument(orderRequestDTO.getDocument())
                 .flatMap(user -> {
                     final Mono<DriverResponseDTO> driverMono = driversService.findAvailableDriver(orderRequestDTO.getCategory(), orderRequestDTO.getOrigin(), user.getRating());
 
-                    return driverMono.flatMap(driver -> {
+                    return driverMono.map(driver -> {
                         final OrderEntity orderEntity = OrderEntity.builder()
                                 .passengerId(user.getId())
                                 .driverId(driver.getId())
@@ -96,7 +151,7 @@ public class OrdersController {
                                 .status("pending")
                                 .build();
 
-                        return ordersService.save(orderEntity);
+                        return orderEntity;
                     });
                 });
     }

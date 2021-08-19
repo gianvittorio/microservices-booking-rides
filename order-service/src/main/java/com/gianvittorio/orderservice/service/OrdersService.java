@@ -13,4 +13,6 @@ public interface OrdersService {
     Mono<OrderEntity> save(final OrderEntity orderEntity);
 
     Flux<OrderEntity> findByStatusAndDepartureTimeBetween(final String status, final LocalDateTime start, final LocalDateTime end);
+
+    Mono<Void> deleteById(final Long id);
 }

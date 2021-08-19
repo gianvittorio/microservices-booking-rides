@@ -317,8 +317,40 @@ public class DriversControllerTest {
     }
 
     @Test
-    @DisplayName("Must delete driver.")
-    public void deleteDriverTest() {
+    @DisplayName("Must delete driver by id.")
+    public void deleteDriverByIdTest() {
+
+        // Given
+        final long id = 123l;
+
+        BDDMockito.given(driversService.findById(id))
+                .willReturn(Mono.empty());
+
+        // When and Then
+        final String uriString = UriComponentsBuilder
+                .newInstance()
+                .scheme("http")
+                .host("localhost")
+                .port("8081")
+                .path("drivers/id/".concat(Long.toString(id)))
+                .build()
+                .toUriString();
+
+        webTestClient.delete()
+                .uri(uriString)
+                .headers(httpHeaders -> {
+                    httpHeaders.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+                })
+                .exchange()
+                .expectStatus().isNoContent();
+
+        verify(driversService)
+                .deleteById(id);
+    }
+
+    @Test
+    @DisplayName("Must delete driver by document.")
+    public void deleteDriverByDocumentTest() {
 
         // Given
         final String document = "000.000.000-00";
@@ -332,7 +364,7 @@ public class DriversControllerTest {
                 .scheme("http")
                 .host("localhost")
                 .port("8081")
-                .path("drivers/".concat(document))
+                .path("drivers/document/".concat(document))
                 .build()
                 .toUriString();
 
