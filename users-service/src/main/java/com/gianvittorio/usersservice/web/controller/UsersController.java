@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/users")
 @Log4j2
@@ -30,6 +32,7 @@ public class UsersController {
 
                     return userResponseDTO;
                 })
+                .onErrorMap(RuntimeException::new)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
@@ -43,12 +46,13 @@ public class UsersController {
 
                     return userResponseDTO;
                 })
+                .onErrorMap(RuntimeException::new)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<UserResponseDTO>> createUser(@RequestBody final UserRequestDTO userRequestDTO) {
+    public Mono<ResponseEntity<UserResponseDTO>> createUser(@Valid @RequestBody final UserRequestDTO userRequestDTO) {
         return Mono.just(userRequestDTO)
                 .map(requestDTO -> {
                     final UserEntity userEntity = new UserEntity();
@@ -63,6 +67,7 @@ public class UsersController {
 
                     return userResponseDTO;
                 })
+                .onErrorMap(RuntimeException::new)
                 .map(ResponseEntity::ok);
     }
 
@@ -81,6 +86,7 @@ public class UsersController {
 
                     return userResponseDTO;
                 })
+                .onErrorMap(RuntimeException::new)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
