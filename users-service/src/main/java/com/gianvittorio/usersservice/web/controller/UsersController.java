@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
@@ -32,7 +33,7 @@ public class UsersController {
 
                     return userResponseDTO;
                 })
-                .onErrorMap(RuntimeException::new)
+                .onErrorMap(error -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error))
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
@@ -46,7 +47,7 @@ public class UsersController {
 
                     return userResponseDTO;
                 })
-                .onErrorMap(RuntimeException::new)
+                .onErrorMap(error -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error))
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
@@ -67,7 +68,7 @@ public class UsersController {
 
                     return userResponseDTO;
                 })
-                .onErrorMap(RuntimeException::new)
+                .onErrorMap(error -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error))
                 .map(ResponseEntity::ok);
     }
 
@@ -86,7 +87,7 @@ public class UsersController {
 
                     return userResponseDTO;
                 })
-                .onErrorMap(RuntimeException::new)
+                .onErrorMap(error -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error))
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }

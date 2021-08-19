@@ -1,16 +1,12 @@
 package com.gianvittorio.orderservice.config.webclient;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.gianvittorio.common.config.SerdesConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
@@ -19,6 +15,7 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
+@Import(SerdesConfiguration.class)
 @RequiredArgsConstructor
 public class WebClientConfiguration {
 
@@ -55,21 +52,21 @@ public class WebClientConfiguration {
         return exchangeStrategies;
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-
-        mapper.configure(SerializationFeature.INDENT_OUTPUT,true);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        mapper.registerModule(new JavaTimeModule());
-
-        return mapper;
-    }
-
-    @Bean
-    public ObjectWriter objectWriter() {
-        return objectMapper().writerWithDefaultPrettyPrinter();
-    }
+//    @Bean
+//    public ObjectMapper objectMapper() {
+//        ObjectMapper mapper = new ObjectMapper();
+//
+//        mapper.configure(SerializationFeature.INDENT_OUTPUT,true);
+//        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+//        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+//        mapper.registerModule(new JavaTimeModule());
+//
+//        return mapper;
+//    }
+//
+//    @Bean
+//    public ObjectWriter objectWriter() {
+//        return objectMapper().writerWithDefaultPrettyPrinter();
+//    }
 }
