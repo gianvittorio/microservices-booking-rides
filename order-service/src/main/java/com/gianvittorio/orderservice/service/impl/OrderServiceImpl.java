@@ -31,6 +31,7 @@ public class OrderServiceImpl implements OrdersService {
 
     @Override
     public Flux<OrderEntity> findByStatusAndDepartureTimeBetween(final String status, final LocalDateTime start, final LocalDateTime end) {
-        return ordersRepository.findByStatusAndDepartureTimeBetween(status, start, end);
+        return ordersRepository.findByStatusAndDepartureTimeBetween(status, start, end)
+                .doOnError(log::error);
     }
 }

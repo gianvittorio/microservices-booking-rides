@@ -39,6 +39,8 @@ services:
     environment:
       - "SPRING_PROFILES_ACTIVE=docker"
       - "eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka"
+      - "app.mail.sender.username=pino.loricato170191@gmail.com"
+      - "app.mail.sender.password=Mewtwo18!!"
     networks:
     - "microservices-booking-rides-network"
     restart: always

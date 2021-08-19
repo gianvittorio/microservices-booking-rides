@@ -63,7 +63,8 @@ public class OrdersController {
                     log.error(error);
 
                     return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error);
-                });
+                })
+                .doOnError(log::error);
 
         final Mono<OrderResponseDTO> orderResponseMono = orderEntityMono.map(
                 orderEntity -> {

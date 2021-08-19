@@ -46,7 +46,8 @@ public class DriversServiceImpl implements DriversService {
                         .filter(NetworkException.class::isInstance)
                         .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
                             throw new ServiceException("External Service failed to process after max retries", HttpStatus.SERVICE_UNAVAILABLE.value());
-                        }));
+                        }))
+                .doOnError(log::error);
     }
 
     @Override
@@ -67,7 +68,8 @@ public class DriversServiceImpl implements DriversService {
                         .filter(NetworkException.class::isInstance)
                         .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
                             throw new ServiceException("External Service failed to process after max retries", HttpStatus.SERVICE_UNAVAILABLE.value());
-                        }));
+                        }))
+                .doOnError(log::error);
     }
 
     @Override
@@ -90,6 +92,7 @@ public class DriversServiceImpl implements DriversService {
                         .filter(NetworkException.class::isInstance)
                         .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
                             throw new ServiceException("External Service failed to process after max retries", HttpStatus.SERVICE_UNAVAILABLE.value());
-                        }));
+                        }))
+                .doOnError(log::error);
     }
 }
