@@ -9,9 +9,11 @@ import com.gianvittorio.orderservice.web.dto.OrderRequestDTO;
 import com.gianvittorio.orderservice.web.dto.OrderResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -49,7 +51,8 @@ public class OrdersController {
                 });
 
         return orderResponseMono.map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+                .defaultIfEmpty(ResponseEntity.notFound().build())
+                .onErrorMap(error -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error));
     }
 
     private Mono<OrderEntity> aggregate(final OrderRequestDTO orderRequestDTO) {
@@ -69,6 +72,7 @@ public class OrdersController {
 
                         return ordersService.save(orderEntity);
                     });
-                });
+                })
+                .onErrorMap(error -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error));
     }
 }

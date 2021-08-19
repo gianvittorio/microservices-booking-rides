@@ -1,14 +1,20 @@
 package com.gianvittorio.orderservice.service.impl;
 
 import com.gianvittorio.common.web.dto.drivers.DriverResponseDTO;
+import com.gianvittorio.orderservice.exceptions.NetworkException;
+import com.gianvittorio.orderservice.exceptions.ServiceException;
 import com.gianvittorio.orderservice.service.DriversService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
+
+import java.time.Duration;
 
 @Service
 @Log4j2
@@ -31,7 +37,13 @@ public class DriversServiceImpl implements DriversService {
         return webClient.get()
                 .uri(uriString)
                 .retrieve()
-                .bodyToMono(DriverResponseDTO.class);
+                .onStatus(HttpStatus::is5xxServerError, response -> Mono.error(new NetworkException(String.valueOf(response.rawStatusCode()))))
+                .bodyToMono(DriverResponseDTO.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(2))
+                        .filter(NetworkException.class::isInstance)
+                        .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
+                            throw new ServiceException("External Service failed to process after max retries", HttpStatus.SERVICE_UNAVAILABLE.value());
+                        }));
     }
 
     @Override
@@ -45,7 +57,13 @@ public class DriversServiceImpl implements DriversService {
         return webClient.get()
                 .uri(uriString)
                 .retrieve()
-                .bodyToMono(DriverResponseDTO.class);
+                .onStatus(HttpStatus::is5xxServerError, response -> Mono.error(new NetworkException(String.valueOf(response.rawStatusCode()))))
+                .bodyToMono(DriverResponseDTO.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(2))
+                        .filter(NetworkException.class::isInstance)
+                        .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
+                            throw new ServiceException("External Service failed to process after max retries", HttpStatus.SERVICE_UNAVAILABLE.value());
+                        }));
     }
 
     @Override
@@ -61,6 +79,12 @@ public class DriversServiceImpl implements DriversService {
         return webClient.get()
                 .uri(uriString)
                 .retrieve()
-                .bodyToMono(DriverResponseDTO.class);
+                .onStatus(HttpStatus::is5xxServerError, response -> Mono.error(new NetworkException(String.valueOf(response.rawStatusCode()))))
+                .bodyToMono(DriverResponseDTO.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(2))
+                        .filter(NetworkException.class::isInstance)
+                        .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
+                            throw new ServiceException("External Service failed to process after max retries", HttpStatus.SERVICE_UNAVAILABLE.value());
+                        }));
     }
 }
