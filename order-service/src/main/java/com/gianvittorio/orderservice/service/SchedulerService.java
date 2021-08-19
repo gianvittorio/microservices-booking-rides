@@ -7,6 +7,7 @@ import com.gianvittorio.orderservice.domain.Invoice;
 import com.gianvittorio.orderservice.domain.entity.OrderEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -59,7 +60,7 @@ public class SchedulerService {
 
                     return invoiceMono;
                 })
-                .doOnNext(this::send);
+                .doOnNext(this::mailUser);
 
 
         orderEntityFlux.zipWith(invoiceFlux, (orderEntity, invoice) -> orderEntity)
@@ -71,24 +72,24 @@ public class SchedulerService {
                 .subscribe();
     }
 
-    private void send(final Invoice invoice) {
+    private void mailUser(final Invoice invoice) {
 
-//        final SimpleMailMessage message = new SimpleMailMessage();
-//        message.setFrom("noreply@bookingrides.com");
-//        message.setTo(invoice.getUserEmail());
-//        message.setSubject("Invoice No ".concat(String.valueOf(invoice.getOrderId())));
+        final SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("noreply@booking-rides.com");
+        message.setTo(invoice.getUserEmail());
+        message.setSubject("Invoice No ".concat(String.valueOf(invoice.getOrderId())));
 
         try {
 
             String body = objectWriter.writeValueAsString(invoice);
-            log.info(body);
-            //message.setText(body);
 
-            //mailSender.send(message);
+            message.setText(body);
+
+            log.debug(body);
+
+            mailSender.send(message);
         } catch (Exception e) {
             log.error(e.getMessage());
-
-            //throw new RuntimeException(e);
         }
     }
 }
