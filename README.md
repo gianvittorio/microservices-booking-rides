@@ -43,8 +43,8 @@ Therefore, our project tree will basically be structured as 3 main packages:
 - Users may register themselves, query, update and delete their own personal data, through the users/ api
 - Drivers may register themselves, query, update and delete their own personal data, through the users/ api
 - Users may create new orders, providing id, origin, destination and local time for the ride, as they may also query the status of an order, update it and delete it, as long as it is still pending
-- The Order Service shall dispath orders within a 30 minutes timeframe, once every minute, notify user by email and update order's status
-
+- The Order Service shall dispatch any orders within a 30 minutes timeframe, once every minute, notify the user by email and update order's status, accordingly
+- Users may always get the very first driver matching their own category and origin location, but also their rating (1 - 5) or higher. In the case of no driver matching the rating criteria, one with a closest one shall be found then
 ## The Implementation
 As the programming language, we go with Java 11. We are picking the Spring WebFlux framework, an event-driven, reactive architecture, along with R2DBC Postgres driver connector. As opposed to Spring Web MVC, which makes use of the blocking servlet architecture (one thread per request), it will only require a number of threads equal to 2 the number of available cores, which will also lead to less memory being used by the JVM. For slow services it always runs faster than its blocking counterpart. The downside is: the client must also be non-blocking, making use of asynchronous calls/drivers.
 
@@ -75,10 +75,10 @@ You may also connect to any of the 3 PostgreSQL containers at the below URL's:
 We strongly suggest [DBeaver](https://dbeaver.io/download/), which comes with quite a friendly GUI.
 
 Please, follow up with the usecase down below (guide yourself through the example DTO's provided with the Swagger documentation):
-1 - Create a user (/users api);
-2 - Create a driver (/drivers-matching api);
-3 - Book a ride (/orders api)
-4 - Expect an email from noreply@booking-rides.com. The subject will be the invoice number and the very invoice as the body (json format)
+1. Create a user (/users api);
+2. Create a driver (/drivers-matching api);
+3. Book a ride (/orders api)
+4. Expect an email from noreply@booking-rides.com. The subject will be the invoice number and the very invoice as the body (json format)
 
 
 You may finally take the whole cluster down, gracefully, by running:

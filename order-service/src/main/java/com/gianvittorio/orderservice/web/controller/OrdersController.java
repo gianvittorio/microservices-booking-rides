@@ -64,13 +64,7 @@ public class OrdersController {
     })
     public Mono<ResponseEntity<OrderResponseDTO>> createOrder(@RequestBody @Valid final OrderCreateRequestDTO orderCreateRequestDTO) {
 
-        final Mono<OrderEntity> orderEntityMono = Mono.just(orderCreateRequestDTO)
-                .onErrorResume(error -> {
-                    log.error(error);
-
-                    return Mono.error(error);
-                })
-                .then(usersService.findUserByDocument(orderCreateRequestDTO.getDocument()))
+        final Mono<OrderEntity> orderEntityMono = usersService.findUserByDocument(orderCreateRequestDTO.getDocument())
                 .flatMap(user -> {
                     final Mono<DriverResponseDTO> driverMono = driversService.findAvailableDriver(orderCreateRequestDTO.getCategory(), orderCreateRequestDTO.getOrigin(), user.getRating());
 
@@ -119,13 +113,7 @@ public class OrdersController {
     })
     public Mono<ResponseEntity<OrderResponseDTO>> updateOrder(@PathVariable("id") final Long id, @RequestBody @Valid final OrderUpdateRequestDTO orderUpdateRequestDTO) {
 
-        final Mono<OrderEntity> orderEntityMono = Mono.just(orderUpdateRequestDTO)
-                .onErrorResume(error -> {
-                    log.error(error);
-
-                    return Mono.error(error);
-                })
-                .then(ordersService.findById(id))
+        final Mono<OrderEntity> orderEntityMono = ordersService.findById(id)
                 .filter(orderEntity -> OrderStatus.PENDING.value().equals(orderEntity.getStatus()))
                 .flatMap(orderEntity -> {
                     BeanUtils.copyProperties(orderUpdateRequestDTO, orderEntity);

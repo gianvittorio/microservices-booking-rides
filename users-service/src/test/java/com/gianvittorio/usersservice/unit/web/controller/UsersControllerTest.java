@@ -139,6 +139,7 @@ public class UsersControllerTest {
                 .document("000.000.000-00")
                 .phone("'+551190000000")
                 .email("john.doe@somewhere.net")
+                .rating(0)
                 .build();
 
         final UserEntity userEntity = new UserEntity();
@@ -191,6 +192,7 @@ public class UsersControllerTest {
                 .document("000.000.000-00")
                 .phone("'+551190000000")
                 .email("john.doe@somewhere.net")
+                .rating(0)
                 .build();
 
         final UserEntity userEntity = new UserEntity();
