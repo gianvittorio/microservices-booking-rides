@@ -6,24 +6,25 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OrderRequestDTO {
+public class OrderUpdateRequestDTO {
 
-    private String document;
+    @NotNull
+    private Long id;
 
+    @NotNull
     private String origin;
 
+    @NotNull
     private String destination;
 
-    private String category;
-
+    @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime departure;
-
-    private Boolean isBooked;
 }

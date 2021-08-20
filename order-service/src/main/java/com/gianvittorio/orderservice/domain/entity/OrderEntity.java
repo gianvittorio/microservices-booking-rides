@@ -39,9 +39,9 @@ public class OrderEntity {
     @NotNull
     private String destination;
 
-    @Column("departure_time")
+    @Column("departure")
     @NotNull
-    private LocalDateTime departureTime;
+    private LocalDateTime departure;
 
     @Column("status")
     @NotNull

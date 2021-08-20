@@ -210,6 +210,7 @@ public class DriversControllerTest {
                 .category("luxury")
                 .location("X")
                 .rating(4)
+                .isAvailable(true)
                 .build();
 
         final DriverEntity driverEntity = new DriverEntity();
@@ -268,6 +269,7 @@ public class DriversControllerTest {
                 .category("luxury")
                 .location("X")
                 .rating(4)
+                .isAvailable(true)
                 .build();
 
         final DriverEntity driverEntity = new DriverEntity();
@@ -309,7 +311,6 @@ public class DriversControllerTest {
                 .jsonPath("$.category").isEqualTo(driverEntity.getCategory())
                 .jsonPath("$.location").isEqualTo(driverEntity.getLocation())
                 .jsonPath("$.rating").isEqualTo(driverEntity.getRating());
-
         verify(driversService)
                 .findByDocument(any(String.class));
         verify(driversService)

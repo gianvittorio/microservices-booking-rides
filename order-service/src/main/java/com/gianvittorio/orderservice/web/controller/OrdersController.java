@@ -1,12 +1,15 @@
 package com.gianvittorio.orderservice.web.controller;
 
+import com.gianvittorio.common.exceptions.ServiceException;
 import com.gianvittorio.common.web.dto.drivers.DriverResponseDTO;
+import com.gianvittorio.orderservice.domain.OrderStatus;
 import com.gianvittorio.orderservice.domain.entity.OrderEntity;
 import com.gianvittorio.orderservice.service.DriversService;
 import com.gianvittorio.orderservice.service.OrdersService;
 import com.gianvittorio.orderservice.service.UsersService;
-import com.gianvittorio.orderservice.web.dto.OrderRequestDTO;
+import com.gianvittorio.orderservice.web.dto.OrderCreateRequestDTO;
 import com.gianvittorio.orderservice.web.dto.OrderResponseDTO;
+import com.gianvittorio.orderservice.web.dto.OrderUpdateRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -17,9 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -59,15 +62,35 @@ public class OrdersController {
             @ApiResponse(responseCode = "200", description = "Order set for creation"),
             @ApiResponse(responseCode = "400", description = "Request body is either null or malformed")
     })
-    public Mono<ResponseEntity<OrderResponseDTO>> createOrder(@RequestBody final OrderRequestDTO orderRequestDTO) {
+    public Mono<ResponseEntity<OrderResponseDTO>> createOrder(@RequestBody @Valid final OrderCreateRequestDTO orderCreateRequestDTO) {
 
-
-        final Mono<OrderEntity> orderEntityMono = Mono.just(orderRequestDTO)
-                .flatMap(this::getOrderEntityMono)
-                .onErrorMap(error -> {
+        final Mono<OrderEntity> orderEntityMono = Mono.just(orderCreateRequestDTO)
+                .onErrorResume(error -> {
                     log.error(error);
 
-                    return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error);
+                    return Mono.error(error);
+                })
+                .then(usersService.findUserByDocument(orderCreateRequestDTO.getDocument()))
+                .flatMap(user -> {
+                    final Mono<DriverResponseDTO> driverMono = driversService.findAvailableDriver(orderCreateRequestDTO.getCategory(), orderCreateRequestDTO.getOrigin(), user.getRating());
+
+                    return driverMono.map(driver -> {
+                        final OrderEntity orderEntity = OrderEntity.builder()
+                                .passengerId(user.getId())
+                                .driverId(driver.getId())
+                                .origin(orderCreateRequestDTO.getOrigin())
+                                .destination(orderCreateRequestDTO.getDestination())
+                                .departure(orderCreateRequestDTO.getDeparture())
+                                .status("pending")
+                                .build();
+
+                        return orderEntity;
+                    });
+                })
+                .onErrorResume(error -> {
+                    log.error(error);
+
+                    return Mono.error(error);
                 })
                 .doOnError(log::error)
                 .flatMap(ordersService::save);
@@ -76,7 +99,7 @@ public class OrdersController {
                 orderEntity -> {
                     final OrderResponseDTO orderResponseDTO = OrderResponseDTO.builder()
                             .id(orderEntity.getId())
-                            .departureTime(orderEntity.getDepartureTime())
+                            .departureTime(orderEntity.getDeparture())
                             .status(orderEntity.getStatus())
                             .createdAt(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")))
                             .build();
@@ -94,27 +117,27 @@ public class OrdersController {
             @ApiResponse(responseCode = "404", description = "Order not found"),
             @ApiResponse(responseCode = "400", description = "Request body is either null or malformed")
     })
-    public Mono<ResponseEntity<OrderResponseDTO>> updateOrder(@PathVariable("id") final Long id, @RequestBody final OrderRequestDTO orderRequestDTO) {
+    public Mono<ResponseEntity<OrderResponseDTO>> updateOrder(@PathVariable("id") final Long id, @RequestBody @Valid final OrderUpdateRequestDTO orderUpdateRequestDTO) {
 
-        final Mono<OrderEntity> newOrderEntityMono = Mono.just(orderRequestDTO)
-                .flatMap(this::getOrderEntityMono)
-                .onErrorMap(error -> {
+        final Mono<OrderEntity> orderEntityMono = Mono.just(orderUpdateRequestDTO)
+                .onErrorResume(error -> {
                     log.error(error);
 
-                    return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error.getMessage(), error);
+                    return Mono.error(error);
                 })
-                .doOnError(log::error)
-                .filter(orderEntity -> orderEntity.getStatus().equals("pending"))
-                .flatMap(newOrderEntity -> {
-                    newOrderEntity.setId(id);
-                    return ordersService.save(newOrderEntity);
+                .then(ordersService.findById(id))
+                .filter(orderEntity -> OrderStatus.PENDING.value().equals(orderEntity.getStatus()))
+                .flatMap(orderEntity -> {
+                    BeanUtils.copyProperties(orderUpdateRequestDTO, orderEntity);
+
+                    return ordersService.save(orderEntity);
                 });
 
-        final Mono<OrderResponseDTO> orderResponseMono = newOrderEntityMono.map(
+        final Mono<OrderResponseDTO> orderResponseMono = orderEntityMono.map(
                 orderEntity -> {
                     final OrderResponseDTO orderResponseDTO = OrderResponseDTO.builder()
                             .id(orderEntity.getId())
-                            .departureTime(orderEntity.getDepartureTime())
+                            .departureTime(orderEntity.getDeparture())
                             .status(orderEntity.getStatus())
                             .createdAt(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")))
                             .build();
@@ -122,7 +145,8 @@ public class OrdersController {
                     return orderResponseDTO;
                 });
 
-        return orderResponseMono.map(ResponseEntity::ok);
+        return orderResponseMono.map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
@@ -131,28 +155,8 @@ public class OrdersController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> deleteOrder(@PathVariable("id") final Long id) {
         return ordersService.findById(id)
-                .filter(orderEntity -> orderEntity.getStatus().equals("pending"))
+                .filter(orderEntity -> OrderStatus.PENDING.value().equals(orderEntity.getStatus()))
                 .map(OrderEntity::getId)
                 .flatMap(ordersService::deleteById);
-    }
-
-    private Mono<OrderEntity> getOrderEntityMono(final OrderRequestDTO orderRequestDTO) {
-        return usersService.findUserByDocument(orderRequestDTO.getDocument())
-                .flatMap(user -> {
-                    final Mono<DriverResponseDTO> driverMono = driversService.findAvailableDriver(orderRequestDTO.getCategory(), orderRequestDTO.getOrigin(), user.getRating());
-
-                    return driverMono.map(driver -> {
-                        final OrderEntity orderEntity = OrderEntity.builder()
-                                .passengerId(user.getId())
-                                .driverId(driver.getId())
-                                .origin(orderRequestDTO.getOrigin())
-                                .destination(orderRequestDTO.getDestination())
-                                .departureTime(orderRequestDTO.getDeparture())
-                                .status("pending")
-                                .build();
-
-                        return orderEntity;
-                    });
-                });
     }
 }

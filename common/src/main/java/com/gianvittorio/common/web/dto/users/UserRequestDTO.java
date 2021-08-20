@@ -26,4 +26,7 @@ public class UserRequestDTO {
 
     @NotNull
     private String email;
+
+    @NotNull
+    private Integer rating;
 }

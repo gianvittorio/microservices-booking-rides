@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.gianvittorio.common.web.dto.drivers.DriverResponseDTO;
 import com.gianvittorio.common.web.dto.users.UserResponseDTO;
 import com.gianvittorio.orderservice.domain.Invoice;
+import com.gianvittorio.orderservice.domain.OrderStatus;
 import com.gianvittorio.orderservice.domain.entity.OrderEntity;
 import com.gianvittorio.orderservice.service.DriversService;
 import com.gianvittorio.orderservice.service.OrdersService;
@@ -52,7 +53,7 @@ public class ScheduledDispatcher {
 
         log.info("Dispatching pending orders within timeframe: {} until {}", start, end);
 
-        final Flux<OrderEntity> orderEntityFlux = ordersService.findByStatusAndDepartureTimeBetween("pending", start, end);
+        final Flux<OrderEntity> orderEntityFlux = ordersService.findByStatusAndDepartureBetween(OrderStatus.PENDING.value(), start, end);
 
         Flux<Invoice> invoiceFlux = orderEntityFlux.flatMap(orderEntity -> {
 
@@ -68,7 +69,7 @@ public class ScheduledDispatcher {
                                     .origin(orderEntity.getOrigin())
                                     .destination(orderEntity.getDestination())
                                     .driverName(driverName)
-                                    .departure(orderEntity.getDepartureTime())
+                                    .departure(orderEntity.getDeparture())
                                     .createdAt(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")))
                                     .build());
 

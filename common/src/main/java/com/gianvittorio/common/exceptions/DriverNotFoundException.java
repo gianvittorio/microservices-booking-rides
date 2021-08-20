@@ -1,4 +1,4 @@
-package com.gianvittorio.orderservice.exceptions;
+package com.gianvittorio.common.exceptions;
 
 public class DriverNotFoundException extends ServiceException{
 

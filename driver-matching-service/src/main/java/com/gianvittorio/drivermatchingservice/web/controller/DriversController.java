@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/drivers")
 @Log4j2
@@ -92,7 +94,7 @@ public class DriversController {
             @ApiResponse(responseCode = "200", description = "Driver set for creation"),
             @ApiResponse(responseCode = "400", description = "Request body is either null or malformed")
     })
-    public Mono<ResponseEntity<DriverResponseDTO>> createDriver(@RequestBody DriverRequestDTO driverRequestDTO) {
+    public Mono<ResponseEntity<DriverResponseDTO>> createDriver(@Valid  @RequestBody DriverRequestDTO driverRequestDTO) {
         return Mono.just(driverRequestDTO)
                 .map(requestDTO -> {
                     final DriverEntity driverEntity = new DriverEntity();
@@ -118,7 +120,7 @@ public class DriversController {
             @ApiResponse(responseCode = "404", description = "Driver not found"),
             @ApiResponse(responseCode = "400", description = "Request body is either null or malformed")
     })
-    public Mono<ResponseEntity<DriverResponseDTO>> updateDriver(@PathVariable("document") final String document, @RequestBody DriverRequestDTO driverRequestDTO) {
+    public Mono<ResponseEntity<DriverResponseDTO>> updateDriver(@PathVariable("document") final String document, @Valid @RequestBody DriverRequestDTO driverRequestDTO) {
         return driversService.findByDocument(document)
                 .map(driverEntity -> {
                     BeanUtils.copyProperties(driverRequestDTO, driverEntity);

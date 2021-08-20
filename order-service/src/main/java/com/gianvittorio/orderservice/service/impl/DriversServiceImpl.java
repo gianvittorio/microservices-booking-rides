@@ -1,10 +1,9 @@
 package com.gianvittorio.orderservice.service.impl;
 
+import com.gianvittorio.common.exceptions.DriverNotFoundException;
+import com.gianvittorio.common.exceptions.NetworkException;
+import com.gianvittorio.common.exceptions.ServiceException;
 import com.gianvittorio.common.web.dto.drivers.DriverResponseDTO;
-import com.gianvittorio.orderservice.exceptions.DriverNotFoundException;
-import com.gianvittorio.orderservice.exceptions.NetworkException;
-import com.gianvittorio.orderservice.exceptions.ServiceException;
-import com.gianvittorio.orderservice.exceptions.UserNotFoundException;
 import com.gianvittorio.orderservice.service.DriversService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

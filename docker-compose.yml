@@ -54,7 +54,7 @@ services:
 
   order-service-postgres:
     container_name: order-service-postgres
-    image: postgres:latest
+    image: postgres:13.4-alpine
     environment:
       - "POSTGRES_USER=test"
       - "POSTGRES_PASSWORD=test"
@@ -84,7 +84,7 @@ services:
 
   users-service-postgres:
     container_name: users-service-postgres
-    image: postgres:latest
+    image: postgres:13.4-alpine
     environment:
       - "POSTGRES_USER=test"
       - "POSTGRES_PASSWORD=test"
@@ -114,7 +114,7 @@ services:
 
   driver-matching-service-postgres:
     container_name: driver-matching-service-postgres
-    image: postgres:latest
+    image: postgres:13.4-alpine
     environment:
       - "POSTGRES_USER=test"
       - "POSTGRES_PASSWORD=test"

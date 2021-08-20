@@ -97,7 +97,7 @@ public class UsersController {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "400", description = "Request body is either null or malformed")
     })
-    public Mono<ResponseEntity<UserResponseDTO>> updateUser(@PathVariable("document") final String document, @RequestBody final UserRequestDTO userRequestDTO) {
+    public Mono<ResponseEntity<UserResponseDTO>> updateUser(@PathVariable("document") final String document, @Valid @RequestBody final UserRequestDTO userRequestDTO) {
 
         return usersService.findUserByDocument(document)
                 .flatMap(userEntity -> {

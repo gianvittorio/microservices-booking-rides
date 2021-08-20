@@ -1,4 +1,4 @@
-package com.gianvittorio.orderservice.exceptions;
+package com.gianvittorio.common.exceptions;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

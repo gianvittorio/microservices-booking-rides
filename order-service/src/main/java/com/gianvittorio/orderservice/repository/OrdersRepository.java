@@ -13,5 +13,5 @@ public interface OrdersRepository extends ReactiveCrudRepository<OrderEntity, Lo
 
     Flux<OrderEntity> findByPassengerIdAndDriverId(final Long passengerId, final Long driverId);
 
-    Flux<OrderEntity> findByStatusAndDepartureTimeBetween(final String status, final LocalDateTime start, final LocalDateTime end);
+    Flux<OrderEntity> findByStatusAndDepartureBetween(final String status, final LocalDateTime start, final LocalDateTime end);
 }
